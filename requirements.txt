@@ -1,0 +1,17 @@
+tqdm
+nltk
+numpy
+tensorboardX
+dataclasses
+boto3
+requests
+transformers
+networkx
+lmdb
+
+colorama
+termcolor
+pyfiglet
+einops
+argtyped
+line_profiler
