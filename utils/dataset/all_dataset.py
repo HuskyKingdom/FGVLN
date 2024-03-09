@@ -142,6 +142,7 @@ class BaseDataset(Dataset):
             return min(len(self._listing_ids), threshold)
         else:
             return len(self._listing_ids)
+        
     def __getitem__(self, index: int):
         # get a random listing_id
         listing_id = self._listing_ids[index]
