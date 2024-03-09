@@ -84,6 +84,9 @@ class Lily(PreTrainedModel):
             output_all_encoded_layers=False,
         )
 
+        print(instr_tokens.shape)
+        print(pooled_output_t.shape)
+
         linguistic_prediction, vision_prediction, _ = self.cls(
             sequence_output_t, sequence_output_v, pooled_output_t, pooled_output_v
         )
@@ -98,6 +101,8 @@ class Lily(PreTrainedModel):
             assert False
 
         pooled_output = self.dropout(pooled_output)
+
+        print(pooled_output.shape)
 
         outputs = {}
 
