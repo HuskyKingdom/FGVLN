@@ -67,6 +67,9 @@ class Lily(PreTrainedModel):
         highlight_tokens=None,
         order_atteneded_visual_feature=None,
     ) -> Dict[str, torch.Tensor]:
+        
+        print(instr_tokens.shape)
+
         (
             sequence_output_t,
             sequence_output_v,

@@ -51,7 +51,7 @@ def get_model_input(batch):
         attend_order_visual_feature,
     ) = batch
 
-    print(instr_tokens.shape)
+    # print(instr_tokens.shape) 8 7 56
 
     # remove padding samples
     image_features = image_features[opt_mask]
@@ -210,7 +210,6 @@ def train_epoch(
         # get the model output
         outputs = model(*get_model_input(batch))
 
-        print(outputs["ranking"].shape)
 
     
         # calculate the final loss
