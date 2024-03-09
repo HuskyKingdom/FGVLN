@@ -232,7 +232,7 @@ class BaseDataset(Dataset):
                 boxes += [b]
                 probs += [p]
                 masks += [m]
-
+        print(instructions)
         # convert data into tensors
         image_features = torch.from_numpy(np.array(features)).float()
         image_boxes = torch.from_numpy(np.array(boxes)).float()
