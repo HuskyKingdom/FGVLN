@@ -203,7 +203,8 @@ def train_epoch(
             for t in batch
         )
 
-        print(batch[1].shape)
+        print(batch[6])
+        print(batch[6].shape)
 
         # get the model output
         outputs = model(*get_model_input(batch))
