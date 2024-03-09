@@ -51,9 +51,7 @@ def get_model_input(batch):
         attend_order_visual_feature,
     ) = batch
 
-    print(instr_tokens.shape)
 
-    print(opt_mask)
 
     # remove padding samples
     image_features = image_features[opt_mask]
@@ -68,7 +66,7 @@ def get_model_input(batch):
         -1, co_attention_mask.size(2), co_attention_mask.size(3)
     )
 
-    print(instr_tokens.shape)
+
 
     return (
         instr_tokens,
@@ -142,6 +140,7 @@ def get_loss_correct(batch: List[torch.Tensor], outputs: Dict[str, torch.Tensor]
     elif task == 'ranking':
         target = get_ranking_target(batch)
         prediction = pad_packed(outputs[f"{task}"].squeeze(1), opt_mask)
+        print(prediction.shape)
         if training:
             loss = F.cross_entropy(prediction, target, ignore_index=-1)
             correct = torch.sum(torch.argmax(prediction, 1) == target).float()
