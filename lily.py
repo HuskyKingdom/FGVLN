@@ -87,6 +87,8 @@ class Lily(PreTrainedModel):
             output_all_encoded_layers=False,
         )
 
+        print("1111")
+
         print(pooled_output_t.shape)
 
         linguistic_prediction, vision_prediction, _ = self.cls(
