@@ -206,7 +206,7 @@ def train_epoch(
         # get the model output
         outputs = model(*get_model_input(batch))
 
-        print(outputs.shape)
+        print(outputs["ranking"].shape)
     
         # calculate the final loss
         loss = torch.tensor(0, device=device).float()
