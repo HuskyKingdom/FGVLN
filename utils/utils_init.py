@@ -51,7 +51,7 @@ def get_model_input(batch):
         attend_order_visual_feature,
     ) = batch
 
-    # print(instr_tokens.shape) 8 7 60
+    print(instr_tokens.shape)
 
     # remove padding samples
     image_features = image_features[opt_mask]
