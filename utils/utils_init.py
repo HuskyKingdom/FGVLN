@@ -142,10 +142,10 @@ def get_loss_correct(batch: List[torch.Tensor], outputs: Dict[str, torch.Tensor]
         prediction = pad_packed(outputs[f"{task}"].squeeze(1), opt_mask)
         print(prediction)
         print(prediction.shape)
+        print(target)
         if training:
             loss = F.cross_entropy(prediction, target, ignore_index=-1)
             correct = torch.sum(torch.argmax(prediction, 1) == target).float()
-            print(correct)
         else:
             loss = F.binary_cross_entropy_with_logits(prediction, target.float())
             correct = torch.sum(
