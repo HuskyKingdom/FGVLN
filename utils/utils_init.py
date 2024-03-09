@@ -51,7 +51,7 @@ def get_model_input(batch):
         attend_order_visual_feature,
     ) = batch
 
-    # print(instr_tokens.shape) 8 7 56
+    print(instr_tokens.shape)
 
     print(opt_mask)
 
@@ -68,7 +68,7 @@ def get_model_input(batch):
         -1, co_attention_mask.size(2), co_attention_mask.size(3)
     )
 
-    # print(instr_tokens.shape) 56 60
+    print(instr_tokens.shape)
 
     return (
         instr_tokens,
