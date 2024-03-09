@@ -68,7 +68,7 @@ class Lily(PreTrainedModel):
         order_atteneded_visual_feature=None,
     ) -> Dict[str, torch.Tensor]:
         
-        print(instr_tokens.shape)
+        # print(instr_tokens.shape)
 
         (
             sequence_output_t,
@@ -87,9 +87,7 @@ class Lily(PreTrainedModel):
             output_all_encoded_layers=False,
         )
 
-        print("1111")
-
-        print(pooled_output_t.shape)
+        # print(pooled_output_t.shape)
 
         linguistic_prediction, vision_prediction, _ = self.cls(
             sequence_output_t, sequence_output_v, pooled_output_t, pooled_output_v

@@ -53,6 +53,8 @@ def get_model_input(batch):
 
     # print(instr_tokens.shape) 8 7 56
 
+    print(opt_mask)
+
     # remove padding samples
     image_features = image_features[opt_mask]
     image_locations = image_locations[opt_mask]
