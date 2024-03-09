@@ -51,6 +51,8 @@ def get_model_input(batch):
         attend_order_visual_feature,
     ) = batch
 
+    print(instr_tokens.shape)
+
     # remove padding samples
     image_features = image_features[opt_mask]
     image_locations = image_locations[opt_mask]
@@ -63,6 +65,8 @@ def get_model_input(batch):
     co_attention_mask = co_attention_mask.view(
         -1, co_attention_mask.size(2), co_attention_mask.size(3)
     )
+
+    print(instr_tokens.shape)
 
     return (
         instr_tokens,
