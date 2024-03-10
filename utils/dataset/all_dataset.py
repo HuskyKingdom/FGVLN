@@ -159,7 +159,7 @@ class BaseDataset(Dataset):
         ) = self._pick_photo_ids(listing_id)
 
         print("listing_id : {}, \n positive_ids {} , \n negative_captions {} , \n negative_images {} , \n negative_random {} ".
-              format(listing_id, negative_captions, negative_images, negative_random))
+              format(listing_id, positive_ids, negative_captions, negative_images, negative_random))
 
         # get the order label of trajectory
         ordering_target = []
