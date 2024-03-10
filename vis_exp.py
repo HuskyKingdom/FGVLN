@@ -379,5 +379,6 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
         )
 
     outputs = model(*get_model_input(batch))
+    model.zero_grad()
 
     print(outputs["ranking"])
