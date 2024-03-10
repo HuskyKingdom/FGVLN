@@ -302,10 +302,12 @@ if len(args.from_pretrained) == 0:  # hack for catching --from_pretrained ""
     model = Lily(config)
 else:
     model = Lily.from_pretrained(
-        args.from_pretrained, config, default_gpu=default_gpu
+        args.from_pretrained, config, default_gpu=True
     )
 
 model.to(device)
+
+print(torch.cuda.memory_allocated())
 
 
 def load_features_reader(args) -> FeaturesReader:
@@ -355,7 +357,6 @@ train_sampler = RandomSampler(Datset)
 
 batch_size = args.batch_size // args.gradient_accumulation_steps
 
-print(batch_size)
 
 train_data_loader = DataLoader(
         Datset,
