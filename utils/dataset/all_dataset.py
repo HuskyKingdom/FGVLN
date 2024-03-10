@@ -148,7 +148,6 @@ class BaseDataset(Dataset):
         
         listing_id = self._listing_ids[index]
 
-        print(listing_id)
 
         # select negative and positive photo ids
         (
@@ -159,7 +158,7 @@ class BaseDataset(Dataset):
             order_labels
         ) = self._pick_photo_ids(listing_id)
 
-        print(positive_ids)
+        print("listing_id : {}, positive_ids {} ".format(listing_id, positive_ids))
 
         # get the order label of trajectory
         ordering_target = []
