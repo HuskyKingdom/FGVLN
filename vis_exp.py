@@ -43,7 +43,7 @@ from utils.dataset.common import (
 )
 from utils.distributed import set_cuda, get_local_rank, wrap_distributed_model
 from tqdm import tqdm
-
+from vilbert.vilbert_init import get_optimization
 from torch.utils.data import RandomSampler, SequentialSampler, DataLoader
 
 from transformers import BertTokenizer
@@ -274,7 +274,7 @@ class VisDataset(YTbDataset):
 
 
 
-print(torch.cuda.memory_allocated())
+
 # command line parsing
 parser = get_parser()
 parser.add_argument("--final", default=False, action="store_true")
@@ -308,7 +308,9 @@ else:
 model.to(device)
 model = wrap_distributed_model(model, local_rank)
 
-print(torch.cuda.memory_allocated())
+
+optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
+
 
 
 def load_features_reader(args) -> FeaturesReader:
