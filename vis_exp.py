@@ -77,7 +77,7 @@ class VisDataset(YTbDataset):
         new_list_1.append(positive_ids[0])
         negative_images = new_list_1 # replacement
         
-        print("positive_ids {} , \n negative_captions {} , \n negative_images {} , \n \n")
+        print("positive_ids {} , \n negative_captions {} , \n negative_images {} , \n \n".format(positive_ids,negative_captions,negative_images))
 
         # get the order label of trajectory
         ordering_target = []
