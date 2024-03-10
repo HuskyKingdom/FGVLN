@@ -363,6 +363,11 @@ train_data_loader = DataLoader(
 
 for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
 
+    device = next(model.parameters()).device
+    model.eval()   # CHANGE
+    model.zero_grad()
+
+
     batch = tuple(
             t.cuda(device=device, non_blocking=True) if hasattr(t, "cuda") else t
             for t in batch
