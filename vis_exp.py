@@ -129,7 +129,7 @@ class VisDataset(YTbDataset):
         negative_captions = new_list # replacement
 
         
-        print("positive_ids {} , \n negative_captions {} , \n \n".format(positive_ids,negative_captions))
+        # print("positive_ids {} , \n negative_captions {} , \n \n".format(positive_ids,negative_captions))
 
         # get the order label of trajectory
         ordering_target = []
@@ -250,6 +250,8 @@ class VisDataset(YTbDataset):
         else:
             ranking_target = torch.zeros(image_features.shape[0]).bool()
             ranking_target[0] = 1
+
+        print(instr_tokens)
         
         return (
             ranking_target,
