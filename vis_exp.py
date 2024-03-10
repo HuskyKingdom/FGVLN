@@ -47,10 +47,6 @@ from transformers import BertTokenizer
 from utils.dataset.features_reader import FeaturesReader, BnBFeaturesReader, YTbFeaturesReader, PanoFeaturesReader
 
 class VisDataset(YTbDataset):
-
-    def __init__(self, testset_path: Path | str, **kwargs):
-        super().__init__(testset_path, **kwargs)
-
     
     def __getitem__(self, index: int):
 
