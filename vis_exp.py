@@ -370,7 +370,7 @@ train_data_loader = DataLoader(
 
 for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
 
-    model.train()   # CHANGE
+    model.eval()   # CHANGE
     model.zero_grad()
 
 
@@ -381,8 +381,8 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
 
     outputs = model(*get_model_input(batch))
 
-    if (step + 1) % args.gradient_accumulation_steps == 0:
-        model.zero_grad()
+    
+    model.zero_grad()
 
 
     print(outputs["ranking"])
