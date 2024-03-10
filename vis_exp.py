@@ -48,6 +48,56 @@ from torch.utils.data import RandomSampler, SequentialSampler, DataLoader
 from transformers import BertTokenizer
 from utils.dataset.features_reader import FeaturesReader, BnBFeaturesReader, YTbFeaturesReader, PanoFeaturesReader
 
+
+def get_model_input(batch):
+    (
+        _,
+        image_features,
+        image_locations,
+        image_mask,
+        _,
+        _,
+        instr_tokens,
+        instr_mask,
+        _,
+        instr_highlights,
+        segment_ids,
+        co_attention_mask,
+        _,
+        opt_mask,
+        _,
+        attend_order_visual_feature,
+    ) = batch
+
+
+
+    # remove padding samples
+    image_features = image_features[opt_mask]
+    image_locations = image_locations[opt_mask]
+    image_mask = image_mask[opt_mask]
+    instr_tokens = instr_tokens[opt_mask]
+    instr_mask = instr_mask[opt_mask]
+    instr_highlights = instr_highlights[opt_mask]
+    segment_ids = segment_ids[opt_mask]
+    # transform batch shape
+    co_attention_mask = co_attention_mask.view(
+        -1, co_attention_mask.size(2), co_attention_mask.size(3)
+    )
+
+
+
+    return (
+        instr_tokens,
+        image_features,
+        image_locations,
+        segment_ids,
+        instr_mask,
+        image_mask,
+        co_attention_mask,
+        instr_highlights,
+        attend_order_visual_feature,
+    )
+
 class VisDataset(YTbDataset):
     
     def __getitem__(self, index: int):
@@ -315,3 +365,7 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
             t.cuda(device=device, non_blocking=True) if hasattr(t, "cuda") else t
             for t in batch
         )
+
+    outputs = model(*get_model_input(batch))
+
+    print(outputs["ranking"])
