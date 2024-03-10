@@ -66,9 +66,18 @@ class VisDataset(YTbDataset):
             negative_random,
             order_labels
         ) = self._pick_photo_ids(listing_id)
+        
+        new_list = positive_ids[:-1] 
+        new_list.append(positive_ids[0])
 
-        print(positive_ids)
+        negative_captions = new_list # replacement
 
+        new_list_1 = positive_ids[:-2] 
+        new_list_1.append(positive_ids[0])
+        new_list_1.append(positive_ids[0])
+        negative_images = new_list_1 # replacement
+        
+        print("positive_ids {} , \n negative_captions {} , \n negative_images {} , \n \n")
 
         # get the order label of trajectory
         ordering_target = []
