@@ -52,7 +52,8 @@ class VisDataset(YTbDataset):
     
     def __getitem__(self, index: int):
 
-                # get a random listing_id
+        
+        # get a random listing_id
         
         listing_id = self._listing_ids[index]
 
@@ -281,7 +282,7 @@ Datset = VisDataset(
     features_reader=features_reader,
     masked_vision=False,
     masked_language=False,
-    training=False,
+    training=True,
     separators=separators,
     testset_path=testset_path,
 )

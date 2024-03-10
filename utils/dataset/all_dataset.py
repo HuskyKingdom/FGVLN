@@ -414,7 +414,6 @@ class YTbDataset(BaseDataset):
             if self._traj_judge:
                 return self._testset['traj'][listing_id]
             else:
-                print (self._testset['ranking'])
                 return self._testset['ranking'][listing_id]
 
         # Generate a positive path based on listing_id
