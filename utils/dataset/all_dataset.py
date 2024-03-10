@@ -187,9 +187,10 @@ class BaseDataset(Dataset):
         self.templete = None
         
         instructions = [self.generate_instruction(build_instruction,positive_ids)]
-        print(instructions)
         f, b, p, m = self._get_visual_features(positive_ids)
         features, boxes, probs, masks = [f], [b], [p], [m] # This feature will patch to the longest length (8)
+
+        print(features.shape)
         
         if self._traj_judge: # Trajectory judgment task
             negative_traj = negative_captions + negative_images + negative_random
