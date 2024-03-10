@@ -355,6 +355,8 @@ train_sampler = RandomSampler(Datset)
 
 batch_size = args.batch_size // args.gradient_accumulation_steps
 
+print(batch_size)
+
 train_data_loader = DataLoader(
         Datset,
         sampler=train_sampler,
