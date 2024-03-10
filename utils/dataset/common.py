@@ -1094,6 +1094,7 @@ class YTBRephraseInstructionGenerator(InstructionGenerator):
         # gather captions
         captions: List[str] = []
         actions: List[str] = []
+        print(trajectory)
         for vid, fid in trajectory:
             caption, action = ytb_get_caption(ytb_get_key(vid,fid[0]), self._photo_id_to_caption)
             if caption =="":
