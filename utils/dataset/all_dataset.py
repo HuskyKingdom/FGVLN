@@ -145,7 +145,7 @@ class BaseDataset(Dataset):
         
     def __getitem__(self, index: int):
         # get a random listing_id
-        print(self._listing_ids)
+        
         listing_id = self._listing_ids[index]
 
         # select negative and positive photo ids
@@ -156,6 +156,8 @@ class BaseDataset(Dataset):
             negative_random,
             order_labels
         ) = self._pick_photo_ids(listing_id)
+
+        print(positive_ids)
 
         # get the order label of trajectory
         ordering_target = []
