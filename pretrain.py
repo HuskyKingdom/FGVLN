@@ -18,6 +18,7 @@ from vilbert.vilbert_init import get_optimization
 
 
 def main():
+
     # command line parsing
     parser = get_parser()
     parser.add_argument("--final", default=False, action="store_true")

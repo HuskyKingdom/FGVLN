@@ -41,7 +41,7 @@ from utils.dataset.common import (
     ConcatenateInstructionGenerator,  
     YTBRephraseInstructionGenerator,
 )
-
+from utils.distributed import set_cuda, get_local_rank, wrap_distributed_model
 from tqdm import tqdm
 
 from torch.utils.data import RandomSampler, SequentialSampler, DataLoader
@@ -306,6 +306,7 @@ else:
     )
 
 model.to(device)
+model = wrap_distributed_model(model, local_rank)
 
 print(torch.cuda.memory_allocated())
 
