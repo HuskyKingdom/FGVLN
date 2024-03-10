@@ -324,7 +324,7 @@ def get_testset_path(args) -> str:
     return testset_path
 
 def get_path(args, task_prefix) ->str:
-    return f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{task_prefix}testset{args.feather_note}.json"
+    return f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}testset{args.feather_note}.json"
 
 
 
