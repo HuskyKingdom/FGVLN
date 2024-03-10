@@ -250,8 +250,6 @@ class VisDataset(YTbDataset):
         else:
             ranking_target = torch.zeros(image_features.shape[0]).bool()
             ranking_target[0] = 1
-
-        print(instr_tokens)
         
         return (
             ranking_target,
