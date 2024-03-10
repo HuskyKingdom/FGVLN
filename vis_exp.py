@@ -41,7 +41,7 @@ from utils.dataset.common import (
     YTBRephraseInstructionGenerator,
 )
 
-import tqdm
+from tqdm import tqdm
 
 from torch.utils.data import RandomSampler, SequentialSampler, DataLoader
 
