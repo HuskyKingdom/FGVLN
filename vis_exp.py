@@ -41,6 +41,8 @@ from utils.dataset.common import (
     YTBRephraseInstructionGenerator,
 )
 
+import tqdm
+
 from torch.utils.data import RandomSampler, SequentialSampler, DataLoader
 
 from transformers import BertTokenizer
@@ -294,3 +296,12 @@ train_data_loader = DataLoader(
         pin_memory=True,
     )
 
+
+for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
+
+    batch = tuple(
+            t.cuda(device=device, non_blocking=True) if hasattr(t, "cuda") else t
+            for t in batch
+        )
+    
+    print(batch)
