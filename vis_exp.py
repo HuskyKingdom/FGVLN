@@ -7,7 +7,7 @@ from pretrain import set_cuda,get_local_rank
 from utils.dataset.dataset_init import load_dataloader
 from utils.misc import get_output_dir, set_seed, NoneLogger, logo_print, exp_saver, get_logger
 from lily import Lily, BERT_CONFIG_FACTORY
-
+import torch.distributed as dist
 from utils.dataset.all_dataset import YTbDataset
 import torch
 import random
@@ -359,6 +359,8 @@ Datset = VisDataset(
 train_sampler = RandomSampler(Datset)
 
 batch_size = args.batch_size // args.gradient_accumulation_steps
+if local_rank != -1:
+    batch_size = batch_size // dist.get_world_size()
 
 
 train_data_loader = DataLoader(
