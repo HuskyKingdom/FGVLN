@@ -148,6 +148,8 @@ class BaseDataset(Dataset):
         
         listing_id = self._listing_ids[index]
 
+        print(listing_id)
+
         # select negative and positive photo ids
         (
             positive_ids,
