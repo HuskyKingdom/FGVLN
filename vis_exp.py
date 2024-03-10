@@ -118,16 +118,16 @@ class VisDataset(YTbDataset):
             order_labels
         ) = self._pick_photo_ids(listing_id)
         
-        # new_list = [positive_ids[:-1]] 
-        # new_list[0].append(positive_ids[0])
+        new_list = [positive_ids[:-1]] 
+        new_list[0].append(positive_ids[0])
 
-        # new_list_1 = positive_ids[:-2] 
-        # new_list_1.append(positive_ids[0])
-        # new_list_1.append(positive_ids[0])
+        new_list_1 = positive_ids[:-2] 
+        new_list_1.append(positive_ids[0])
+        new_list_1.append(positive_ids[0])
 
-        # new_list.append(new_list_1)
+        new_list.append(new_list_1)
 
-        # negative_captions = new_list # replacement
+        negative_captions = new_list # replacement
 
         
         # print("positive_ids {} , \n negative_captions {} , \n \n".format(positive_ids,negative_captions))
@@ -274,7 +274,7 @@ class VisDataset(YTbDataset):
 
 
 
-
+print(torch.cuda.memory_allocated())
 # command line parsing
 parser = get_parser()
 parser.add_argument("--final", default=False, action="store_true")
