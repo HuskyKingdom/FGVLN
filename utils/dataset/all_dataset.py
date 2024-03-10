@@ -158,6 +158,7 @@ class BaseDataset(Dataset):
             order_labels
         ) = self._pick_photo_ids(listing_id)
 
+        print(positive_ids)
 
         # get the order label of trajectory
         ordering_target = []

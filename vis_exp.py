@@ -1,8 +1,23 @@
+# python vis_exp.py --from_pretrained data/trained/pretrain_LILY.bin  --pre_dataset ytb --prefix merge+
+
+from pathlib import Path
 from utils.cli import get_parser
 from pretrain import set_cuda,get_local_rank
 from utils.dataset.dataset_init import load_dataloader
 from utils.misc import get_output_dir, set_seed, NoneLogger, logo_print, exp_saver, get_logger
 from lily import Lily, BERT_CONFIG_FACTORY
+
+from utils.dataset.all_dataset import YTbDataset
+
+
+def get_input():
+
+    positive_ids = []
+
+    pass
+
+
+
 
 # command line parsing
 parser = get_parser()
@@ -36,4 +51,7 @@ else:
 
 model.to(device)
 
-print(model)
+
+
+
+# construct model inputs
