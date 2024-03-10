@@ -1,4 +1,5 @@
-# python vis_exp.py --from_pretrained data/trained/pretrain_LILY.bin  --pre_dataset ytb --prefix merge+
+# python vis_exp.py --pre_dataset ytb     --from_pretrained data/trained/pretrain_LILY.bin     --save_name ytbvln_2e5_500_MRT     --prefix merge+     --separators     --masked_vision     --masked_language     --ranking     --traj_judge     --batch_size 8     --learning_rate 2e-5     --num_epochs 500     --save_epochs 100
+
 
 from pathlib import Path
 from utils.cli import get_parser
@@ -352,10 +353,12 @@ Datset = VisDataset(
 
 train_sampler = RandomSampler(Datset)
 
+batch_size = args.batch_size // args.gradient_accumulation_steps
+
 train_data_loader = DataLoader(
         Datset,
         sampler=train_sampler,
-        batch_size=8,
+        batch_size=batch_size,
         num_workers=args.num_workers,
         pin_memory=True,
     )
