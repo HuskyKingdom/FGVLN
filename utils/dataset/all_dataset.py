@@ -158,8 +158,6 @@ class BaseDataset(Dataset):
             order_labels
         ) = self._pick_photo_ids(listing_id)
 
-        print("listing_id : {}, \n positive_ids {}  \n negative_captions {} , \n negative_images {} , \n negative_random {} \n, order_labels : {} \n ".
-              format(listing_id, positive_ids, negative_captions, negative_images, negative_random, order_labels))
 
         # get the order label of trajectory
         ordering_target = []
@@ -189,6 +187,7 @@ class BaseDataset(Dataset):
         self.templete = None
         
         instructions = [self.generate_instruction(build_instruction,positive_ids)]
+        print(instructions)
         f, b, p, m = self._get_visual_features(positive_ids)
         features, boxes, probs, masks = [f], [b], [p], [m] # This feature will patch to the longest length (8)
         
