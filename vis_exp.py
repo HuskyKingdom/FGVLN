@@ -434,7 +434,7 @@ model = wrap_distributed_model(model, local_rank)
 optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
 
-model.train()   # CHANGE
+model.eval()   # CHANGE
 model.zero_grad()
 
 
@@ -463,7 +463,7 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     loss = torch.tensor(0, device=device).float()
     print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
 
-    loss.backward()
+    # loss.backward()
 
     if (step + 1) % args.gradient_accumulation_steps == 0:
         optimizer.step()            
