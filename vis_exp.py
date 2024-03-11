@@ -213,7 +213,7 @@ class VisDataset(YTbDataset):
                 masks += [m]
 
         else:
-            
+
             # get the negative captions
             for traj in negative_captions:
                 instructions += [instructions[0]]
@@ -371,7 +371,7 @@ Datset = VisDataset(
     features_reader=features_reader,
     masked_vision=False,
     masked_language=False,
-    training=True,
+    training=False,
     separators=separators,
     testset_path=testset_path,
 )
