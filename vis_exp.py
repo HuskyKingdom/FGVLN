@@ -41,6 +41,7 @@ from utils.dataset.common import (
     ConcatenateInstructionGenerator,  
     YTBRephraseInstructionGenerator,
 )
+from utils.dataset.common import pad_packed
 from utils.distributed import set_cuda, get_local_rank, wrap_distributed_model
 from tqdm import tqdm
 from vilbert.vilbert_init import get_optimization
@@ -49,6 +50,9 @@ from torch.utils.data import RandomSampler, SequentialSampler, DataLoader
 from transformers import BertTokenizer
 from utils.dataset.features_reader import FeaturesReader, BnBFeaturesReader, YTbFeaturesReader, PanoFeaturesReader
 
+
+def get_mask_options(batch) -> torch.Tensor:
+    return batch[13]
 
 def get_model_input(batch):
     (
@@ -385,8 +389,11 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
 
     outputs = model(*get_model_input(batch))
 
+    opt_mask = get_mask_options(batch)
+    prediction = pad_packed(outputs["ranking"].squeeze(1), opt_mask)
+
     
     model.zero_grad()
 
 
-    print(outputs["ranking"])
+    print(prediction)
