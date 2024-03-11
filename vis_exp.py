@@ -401,13 +401,7 @@ if local_rank != -1:
     batch_size = batch_size // dist.get_world_size()
 
 
-train_data_loader = DataLoader(
-        Datset,
-        sampler=train_sampler,
-        batch_size=batch_size,
-        num_workers=args.num_workers,
-        pin_memory=True,
-    )
+train_data_loader, test_data_loader, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
 
 
 model.eval()   # CHANGE
