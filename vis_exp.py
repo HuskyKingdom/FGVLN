@@ -362,31 +362,31 @@ features_reader = load_features_reader(args)
 separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
 testset_path = get_testset_path(args)
 
-# # test
-# Datset = VisDataset(
-#     args = args,
-#     caption_path=f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_test{args.feather_note}.json",
-#     tokenizer=tokenizer,
-#     features_reader=features_reader,
-#     masked_vision=False,
-#     masked_language=False,
-#     training=False,
-#     separators=separators,
-#     testset_path=testset_path,
-# )
-
-# train
+# test
 Datset = VisDataset(
     args = args,
-    caption_path=caption_path,
+    caption_path=f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_test{args.feather_note}.json",
     tokenizer=tokenizer,
     features_reader=features_reader,
     masked_vision=False,
     masked_language=False,
-    training=True,
+    training=False,
     separators=separators,
     testset_path=testset_path,
 )
+
+# # train
+# Datset = VisDataset(
+#     args = args,
+#     caption_path=caption_path,
+#     tokenizer=tokenizer,
+#     features_reader=features_reader,
+#     masked_vision=False,
+#     masked_language=False,
+#     training=True,
+#     separators=separators,
+#     testset_path=testset_path,
+# )
 
 if local_rank == -1:
     train_sampler = RandomSampler(Datset)
@@ -434,7 +434,7 @@ model = wrap_distributed_model(model, local_rank)
 optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
 
-model.train()   # CHANGE
+model.eval()   # CHANGE
 model.zero_grad()
 
 
