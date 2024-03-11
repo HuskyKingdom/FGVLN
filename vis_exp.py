@@ -385,9 +385,6 @@ else:
 model.to(device)
 model = wrap_distributed_model(model, local_rank)
 
-if default_gpu:
-    with open(save_folder / "model.txt", "w") as fid:
-        fid.write(str(model))
 
 optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
