@@ -2,7 +2,6 @@
 
 from utils.misc import get_output_dir, set_seed, NoneLogger, logo_print, exp_saver, get_logger
 from pathlib import Path
-import os
 from utils.cli import get_parser
 from pretrain import set_cuda,get_local_rank
 from utils.dataset.dataset_init import load_dataloader
@@ -327,6 +326,9 @@ logger = NoneLogger()
 
 
 
+
+
+
 def load_features_reader(args) -> FeaturesReader:
     if args.pre_dataset == 'ytb':
         return YTbFeaturesReader(args.ytb_feature)
@@ -348,9 +350,49 @@ def get_testset_path(args) -> str:
 def get_path(args, task_prefix) ->str:
     return f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{task_prefix}testset{args.feather_note}.json"
 
-
+# create data loaders
 local_rank = get_local_rank(args)
-train_data_loader, test_data_loader, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
+
+# construct model inputs
+caption_path = f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_train{args.feather_note}.json"
+tokenizer = BertTokenizer.from_pretrained(args.bert_tokenizer)
+features_reader = load_features_reader(args)
+separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
+testset_path = get_testset_path(args)
+
+
+Datset = VisDataset(
+    args = args,
+    caption_path=caption_path,
+    tokenizer=tokenizer,
+    features_reader=features_reader,
+    masked_vision=False,
+    masked_language=False,
+    training=True,
+    separators=separators,
+    testset_path=testset_path,
+)
+
+if local_rank == -1:
+    train_sampler = RandomSampler(Datset)
+else:
+    train_sampler = DistributedSampler(Datset)
+
+batch_size = args.batch_size // args.gradient_accumulation_steps
+if local_rank != -1:
+    batch_size = batch_size // dist.get_world_size()
+
+print(local_rank)
+
+train_data_loader = DataLoader(
+        Datset,
+        sampler=train_sampler,
+        batch_size=batch_size,
+        num_workers=args.num_workers,
+        pin_memory=True,
+    )
+
+
 
 
 # load pre-trained model
@@ -358,8 +400,6 @@ train_data_loader, test_data_loader, val_seen_data_loader, val_unseen_data_loade
 # Loading model
 logger.info(f"Loading model")
 config = BERT_CONFIG_FACTORY[args.model_name].from_json_file(args.config_file)
-
-save_folder = get_output_dir(args)
 
 
 config.args = args
@@ -376,7 +416,6 @@ else:
 model.to(device)
 model = wrap_distributed_model(model, local_rank)
 
-
 optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
 
@@ -385,7 +424,6 @@ model.zero_grad()
 
 
 for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
-    
     
 
     batch = tuple(
@@ -408,3 +446,8 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
 
     compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
     # print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
+
+    if (step + 1) % args.gradient_accumulation_steps == 0:
+        optimizer.step()            
+        scheduler.step()
+        model.zero_grad()
