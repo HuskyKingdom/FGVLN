@@ -428,18 +428,4 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
             for t in batch
         )
 
-    outputs = model(*get_model_input(batch))
 
-    opt_mask = get_mask_options(batch)
-    prediction = pad_packed(outputs["ranking"].squeeze(1), opt_mask)
-    target = get_ranking_target(batch)
-    correct = torch.sum(torch.argmax(prediction, 1) == target).float()
-    
-    model.zero_grad()
-
-    reduced_metrics = {}
-    reduced_metrics["loss"] = {}
-    reduced_metrics["accuracy"] = {}
-
-    compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
-    # print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
