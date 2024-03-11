@@ -1,6 +1,6 @@
 # python vis_exp.py --pre_dataset ytb     --from_pretrained data/trained/pretrain_LILY.bin     --save_name ytbvln_2e5_500_MRT     --prefix merge+     --separators     --masked_vision     --masked_language     --ranking     --traj_judge     --batch_size 8     --learning_rate 2e-5     --num_epochs 500     --save_epochs 100
 
-
+from utils.misc import get_output_dir, set_seed, NoneLogger, logo_print, exp_saver, get_logger
 from pathlib import Path
 from utils.cli import get_parser
 from pretrain import set_cuda,get_local_rank
@@ -309,12 +309,14 @@ class VisDataset(YTbDataset):
 
 
 
-
-
 # command line parsing
 parser = get_parser()
 parser.add_argument("--final", default=False, action="store_true")
 args = parser.parse_args()
+
+
+set_seed(args)
+
 
 # get device settings
 default_gpu, _, device = set_cuda(args)
