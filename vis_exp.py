@@ -408,8 +408,7 @@ model.zero_grad()
 
 for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
 
-    
-    model.zero_grad()
+
 
 
     batch = tuple(
