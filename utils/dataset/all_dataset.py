@@ -669,6 +669,9 @@ class BeamDataset(Dataset):
         vln_index = self._beam_to_vln[beam_index]
         vln_item = self._vln_data[vln_index]
 
+        print(vln_index)
+        print(vln_item)
+
         self._visual_data = {}
         self._visual_data['beam_index'] = beam_index
         self._visual_data['path'] = []
