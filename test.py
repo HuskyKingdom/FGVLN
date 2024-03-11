@@ -156,7 +156,7 @@ def eval_epoch(model, data_loader, args):
         else:
            
             batch = tuple(t.cuda(device=device, non_blocking=True) for t in batch)
-            print(batch[12])
+            
 
             # get the model output
             output = model(*get_model_input(batch))

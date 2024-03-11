@@ -148,6 +148,7 @@ def get_loss_correct(batch: List[torch.Tensor], outputs: Dict[str, torch.Tensor]
             correct = torch.sum(
                 target.gather(1, torch.argmax(prediction, 1).view(-1, 1))
             ).float()
+            print(correct)
     elif task == 'traj':
         prediction = pad_packed(outputs[f"{task}"].squeeze(1), opt_mask)
         if not (args.ranking or args.not_traj_judge_data):
