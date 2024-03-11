@@ -49,6 +49,36 @@ from torch.utils.data import RandomSampler, SequentialSampler, DataLoader
 
 from transformers import BertTokenizer
 from utils.dataset.features_reader import FeaturesReader, BnBFeaturesReader, YTbFeaturesReader, PanoFeaturesReader
+from utils.utils_init import get_loss_correct
+from typing import List, Dict, Tuple
+
+def get_device(batch):
+    return batch[0].device
+
+def compute_metrics_independent(batch: List[torch.Tensor], outputs: Dict[str, torch.Tensor], task, args, logger, reduced_metrics) -> torch.Tensor:
+    device = get_device(batch)
+    local_rank = get_local_rank(args)
+    batch_size, target, loss, correct = get_loss_correct(batch, outputs, task, args, logger, True) 
+
+    # calculate accumulated stats
+    reduced_loss = loss.detach().float()
+    reduced_correct = correct.detach().float()
+    reduced_batch_size = torch.tensor(batch_size, device=device).detach().float()
+
+    # TODO: skip this `all_reduce` to speed-up runtime
+    if local_rank != -1 and not args.skip_all_reduce:
+        world_size = float(dist.get_world_size())
+        reduced_loss /= world_size
+        dist.all_reduce(reduced_loss, op=dist.ReduceOp.SUM) # type: ignore
+        dist.all_reduce(reduced_correct, op=dist.ReduceOp.SUM) # type: ignore
+        dist.all_reduce(reduced_batch_size, op=dist.ReduceOp.SUM) # type: ignore
+    
+    reduced_metrics["loss"][f"{task}"] = reduced_loss
+    if not (task == 'vision' or task == 'language'):
+        reduced_metrics["accuracy"][f"{task}"] = reduced_correct / reduced_batch_size
+
+    return loss
+
 
 def get_ranking_target(batch):
     return batch[0]
@@ -398,5 +428,9 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     
     model.zero_grad()
 
+    reduced_metrics = {}
+    reduced_metrics["loss"] = {}
+    reduced_metrics["accuracy"] = {}
 
-    print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
+    compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
+    # print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
