@@ -129,7 +129,7 @@ def load_dataloader(args, default_gpu, logger, local_rank) -> str:
                 test_dataset,
                 np.random.choice(range(len(test_dataset)), size=50, replace=False),  # type: ignore
             )
-            print("1111111111111111111111111111111111111111111111111111111111111 \n\n")
+        
 
         if args.debug:
             test_dataset = Subset(
