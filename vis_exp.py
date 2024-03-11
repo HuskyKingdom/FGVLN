@@ -477,10 +477,6 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     all_logits.append(prediction.detach().tolist())
 
 
-    if (step + 1) % args.gradient_accumulation_steps == 0:
-        optimizer.step()            
-        scheduler.step()
-        model.zero_grad()
 
 
 
