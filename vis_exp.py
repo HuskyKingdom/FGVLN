@@ -446,7 +446,7 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
             for t in batch
         )
     
-    print(batch["instr_tokens"])
+    print(batch[0])
 
     outputs = model(*get_model_input(batch))
 
