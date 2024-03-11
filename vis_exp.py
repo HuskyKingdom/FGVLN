@@ -434,7 +434,7 @@ model = wrap_distributed_model(model, local_rank)
 optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
 
-model.train()   # CHANGE
+model.eval()   # CHANGE
 model.zero_grad()
 
 
