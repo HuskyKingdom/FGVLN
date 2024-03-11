@@ -363,7 +363,7 @@ features_reader = load_features_reader(args)
 separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
 testset_path = get_testset_path(args)
 
-
+# test
 Datset = VisDataset(
     args = args,
     caption_path=f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_test{args.feather_note}.json",
@@ -375,6 +375,19 @@ Datset = VisDataset(
     separators=separators,
     testset_path=testset_path,
 )
+
+# # train
+# Datset = VisDataset(
+#     args = args,
+#     caption_path=caption_path,
+#     tokenizer=tokenizer,
+#     features_reader=features_reader,
+#     masked_vision=False,
+#     masked_language=False,
+#     training=True,
+#     separators=separators,
+#     testset_path=testset_path,
+# )
 
 if local_rank == -1:
     train_sampler = RandomSampler(Datset)
@@ -439,6 +452,7 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     opt_mask = get_mask_options(batch)
     prediction = pad_packed(outputs["ranking"].squeeze(1), opt_mask)
     target = get_ranking_target(batch)
+    print("Prediction: {} \n Target: {}  \n\n".format(prediction,target))
     correct = torch.sum(torch.argmax(prediction, 1) == target).float()
     
     model.zero_grad()
@@ -448,8 +462,7 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     reduced_metrics["accuracy"] = {}
 
     loss = torch.tensor(0, device=device).float()
-    loss += compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
-    # print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
+    print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
 
     loss.backward()
 
