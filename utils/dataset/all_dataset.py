@@ -699,7 +699,6 @@ class BeamDataset(Dataset):
 
         for ranked_path in self._beam_data[beam_index]["ranked_paths"]:
             beam_paths.append([p for p, _, _ in ranked_path])
-            print("P: {} \n \n {} \n {}".format(p,_,_))
 
         success = self._get_path_success(scan_id, gt_path, beam_paths)
         target: Union[List[int], int]
@@ -731,6 +730,7 @@ class BeamDataset(Dataset):
                 else:
                     idx = np.random.choice(np.where(success == 1)[0])  # type: ignore
                     selected_paths.append(beam_paths[idx])
+                    print("hhhhhh")
                     
                 if not self._traj_judge:
                     # next select three negatives
