@@ -403,6 +403,8 @@ if local_rank != -1:
 
 train_data_loader, test_data_loader, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
 
+
+device = next(model.parameters()).device
 model.train()   # CHANGE
 model.zero_grad()
 
