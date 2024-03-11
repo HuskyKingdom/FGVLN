@@ -408,9 +408,11 @@ train_data_loader = DataLoader(
     )
 
 
+model.eval()   # CHANGE
+
 for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
 
-    model.eval()   # CHANGE
+    
     model.zero_grad()
 
 
