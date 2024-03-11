@@ -452,7 +452,7 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     opt_mask = get_mask_options(batch)
     prediction = pad_packed(outputs["ranking"].squeeze(1), opt_mask)
     target = get_ranking_target(batch)
-    print("Prediction: {} \n Target: {}  \n\n".format(prediction,target))
+    print("Prediction: {} \n Target: {}  \n\n".format(prediction.shape,target.shape))
     correct = torch.sum(torch.argmax(prediction, 1) == target).float()
     
     model.zero_grad()
