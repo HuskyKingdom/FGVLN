@@ -328,31 +328,6 @@ logger = NoneLogger()
 local_rank = get_local_rank(args)
 
 
-# load pre-trained model
-
-# Loading model
-logger.info(f"Loading model")
-config = BERT_CONFIG_FACTORY[args.model_name].from_json_file(args.config_file)
-
-
-config.args = args
-
-
-
-
-if len(args.from_pretrained) == 0:  # hack for catching --from_pretrained ""
-    model = Lily(config)
-else:
-    model = Lily.from_pretrained(
-        args.from_pretrained, config, default_gpu=True
-    )
-
-model.to(device)
-model = wrap_distributed_model(model, local_rank)
-
-
-
-
 
 
 def load_features_reader(args) -> FeaturesReader:
@@ -378,18 +353,79 @@ def get_path(args, task_prefix) ->str:
 
 
 
-train_data_loader, test_data_loader, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
+# construct model inputs
+caption_path = f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_train{args.feather_note}.json"
+tokenizer = BertTokenizer.from_pretrained(args.bert_tokenizer)
+features_reader = load_features_reader(args)
+separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
+testset_path = get_testset_path(args)
+
+
+Datset = VisDataset(
+    args = args,
+    caption_path=caption_path,
+    tokenizer=tokenizer,
+    features_reader=features_reader,
+    masked_vision=False,
+    masked_language=False,
+    training=True,
+    separators=separators,
+    testset_path=testset_path,
+)
+
+if local_rank == -1:
+    train_sampler = RandomSampler(Datset)
+
+else:
+    train_sampler = DistributedSampler(Datset)
+
+batch_size = args.batch_size // args.gradient_accumulation_steps
+if local_rank != -1:
+    batch_size = batch_size // dist.get_world_size()
+
+
+train_data_loader = DataLoader(
+        Datset,
+        sampler=train_sampler,
+        batch_size=batch_size,
+        num_workers=args.num_workers,
+        pin_memory=True,
+    )
+
+
+
+
+# load pre-trained model
+
+# Loading model
+logger.info(f"Loading model")
+config = BERT_CONFIG_FACTORY[args.model_name].from_json_file(args.config_file)
+
+
+config.args = args
+
+
+
+if len(args.from_pretrained) == 0:  # hack for catching --from_pretrained ""
+    model = Lily(config)
+else:
+    model = Lily.from_pretrained(
+        args.from_pretrained, config, default_gpu=True
+    )
+
+model.to(device)
+model = wrap_distributed_model(model, local_rank)
 
 optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
 
-model.eval()   # CHANGE
+model.train()   # CHANGE
+model.zero_grad()
+
 
 for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
-
     
-    model.zero_grad()
-
+    
 
     batch = tuple(
             t.cuda(device=device, non_blocking=True) if hasattr(t, "cuda") else t
