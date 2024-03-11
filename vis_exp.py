@@ -360,15 +360,6 @@ logger.info(f"Loading model")
 config = BERT_CONFIG_FACTORY[args.model_name].from_json_file(args.config_file)
 
 save_folder = get_output_dir(args)
-# save the parameters
-if default_gpu:
-    with open(os.path.join(save_folder, "config.txt"), "w") as fid:
-        print("args:\n{", file=fid)
-        for name, value in vars(args).items():
-            print(f"  '{name}': {value}", file=fid)
-        print("}\n", file=fid)
-        print("config:", file=fid)
-        print(config, file=fid)
 
 
 config.args = args
