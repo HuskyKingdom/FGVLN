@@ -727,10 +727,11 @@ class BeamDataset(Dataset):
                 # first select a positive
                 if self._ground_truth_trajectory:
                     selected_paths.append(self._vln_data[vln_index]["path"])
+                    print("hhhh")
                 else:
                     idx = np.random.choice(np.where(success == 1)[0])  # type: ignore
                     selected_paths.append(beam_paths[idx])
-                    print("hhhhhh")
+                    
                     
                 if not self._traj_judge:
                     # next select three negatives
