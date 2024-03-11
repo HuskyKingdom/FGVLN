@@ -50,6 +50,8 @@ from torch.utils.data import RandomSampler, SequentialSampler, DataLoader
 from transformers import BertTokenizer
 from utils.dataset.features_reader import FeaturesReader, BnBFeaturesReader, YTbFeaturesReader, PanoFeaturesReader
 
+def get_ranking_target(batch):
+    return batch[0]
 
 def get_mask_options(batch) -> torch.Tensor:
     return batch[13]
@@ -396,4 +398,4 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     model.zero_grad()
 
 
-    print(prediction)
+    print("Prediction: {} \n Target: {} \n\n".format(prediction,get_ranking_target(batch)))
