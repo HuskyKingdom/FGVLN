@@ -289,8 +289,7 @@ class VisDataset(YTbDataset):
         if self._training:
             ranking_target = torch.tensor(0)
         else:
-            ranking_target = torch.zeros(image_features.shape[0]).bool()
-            ranking_target[0] = 1
+            ranking_target = torch.tensor(0)
         
         return (
             ranking_target,
