@@ -669,9 +669,6 @@ class BeamDataset(Dataset):
         vln_index = self._beam_to_vln[beam_index]
         vln_item = self._vln_data[vln_index]
 
-        print(vln_index)
-        print(vln_item)
-
         self._visual_data = {}
         self._visual_data['beam_index'] = beam_index
         self._visual_data['path'] = []
@@ -702,6 +699,7 @@ class BeamDataset(Dataset):
 
         for ranked_path in self._beam_data[beam_index]["ranked_paths"]:
             beam_paths.append([p for p, _, _ in ranked_path])
+            print("P: {} \n \n {} \n {}".format(p,_,_))
 
         success = self._get_path_success(scan_id, gt_path, beam_paths)
         target: Union[List[int], int]
