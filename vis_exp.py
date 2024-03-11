@@ -271,6 +271,7 @@ class VisDataset(YTbDataset):
         else:
             image_targets = torch.ones_like(image_probs) / image_probs.shape[-1]
             image_targets_mask = torch.zeros_like(image_masks)
+            print("not inside")
 
         # randomly mask instruction tokens
         if self._masked_language:
