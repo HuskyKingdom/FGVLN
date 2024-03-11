@@ -2,6 +2,7 @@
 
 from utils.misc import get_output_dir, set_seed, NoneLogger, logo_print, exp_saver, get_logger
 from pathlib import Path
+import os
 from utils.cli import get_parser
 from pretrain import set_cuda,get_local_rank
 from utils.dataset.dataset_init import load_dataloader
