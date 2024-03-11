@@ -158,9 +158,9 @@ class VisDataset(YTbDataset):
         new_list = [positive_ids[:-1]] 
         new_list[0].append(positive_ids[0])
 
-        new_list_1 = positive_ids[:-2] 
-        new_list_1.append(positive_ids[0])
-        new_list_1.append(positive_ids[0])
+        new_list_1 = positive_ids[:] 
+        new_list_1[3] = positive_ids[-1]
+        
 
         new_list.append(new_list_1)
 
