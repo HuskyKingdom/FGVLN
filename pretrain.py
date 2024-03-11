@@ -48,6 +48,7 @@ def main():
 
     # create data loaders
     local_rank = get_local_rank(args)
+    print(local_rank)
     train_data_loader, test_data_loader, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
 
     # Loading model
