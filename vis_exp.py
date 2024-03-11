@@ -218,10 +218,10 @@ class VisDataset(YTbDataset):
             for traj in negative_captions:
                 instructions += [instructions[0]]
                 f, b, p, m = self._get_visual_features(traj)
-                features += [features[0]]
-                boxes += [boxes[0]]
-                probs += [probs[0]]
-                masks += [masks[0]]
+                features += [f]
+                boxes += [b]
+                probs += [p]
+                masks += [m]
                 
 
             if self.args.negative_style == 'shuffle_instruction':
