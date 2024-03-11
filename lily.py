@@ -69,7 +69,6 @@ class Lily(PreTrainedModel):
     ) -> Dict[str, torch.Tensor]:
         
         # print(instr_tokens.shape)
-        print(instr_tokens)
 
         (
             sequence_output_t,
@@ -103,7 +102,7 @@ class Lily(PreTrainedModel):
         else:
             assert False
 
-        pooled_output = self.dropout(pooled_output)
+        # pooled_output = self.dropout(pooled_output)
 
   
 
