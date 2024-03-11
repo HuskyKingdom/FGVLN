@@ -167,7 +167,7 @@ class VisDataset(YTbDataset):
         negative_captions = new_list # replacement
 
         
-        print("positive_ids {} , \n negative_captions {} , \n \n".format(positive_ids,negative_captions))
+        # print("positive_ids {} , \n negative_captions {} , \n \n".format(positive_ids,negative_captions))
 
         # get the order label of trajectory
         ordering_target = []
@@ -213,6 +213,7 @@ class VisDataset(YTbDataset):
                 masks += [m]
 
         else:
+            
             # get the negative captions
             for traj in negative_captions:
                 instructions += [instructions[0]]
@@ -221,7 +222,7 @@ class VisDataset(YTbDataset):
                 boxes += [b]
                 probs += [p]
                 masks += [m]
-                print("set")
+                
 
             if self.args.negative_style == 'shuffle_instruction':
                 # get the negative captions
