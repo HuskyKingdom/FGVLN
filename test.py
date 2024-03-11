@@ -154,12 +154,15 @@ def eval_epoch(model, data_loader, args):
             vil_logit = torch.rand(batch[0].shape).to(device)
 
         else:
+           
             batch = tuple(t.cuda(device=device, non_blocking=True) for t in batch)
+            print(batch[0])
+            print(batch[1].shape)
             # get the model output
             output = model(*get_model_input(batch))
             opt_mask = get_mask_options(batch)
             vil_logit = pad_packed(output['ranking'].squeeze(1), opt_mask)
-            print(vil_logit)
+            
 
         for instr_id, logit in zip(instr_ids, vil_logit.tolist()):
             all_scores.append((instr_id, logit))
