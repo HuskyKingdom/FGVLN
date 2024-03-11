@@ -444,8 +444,11 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     reduced_metrics["loss"] = {}
     reduced_metrics["accuracy"] = {}
 
-    compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
+    loss = torch.tensor(0, device=device).float()
+    loss += compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
     # print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
+
+    loss.backward()
 
     if (step + 1) % args.gradient_accumulation_steps == 0:
         optimizer.step()            
