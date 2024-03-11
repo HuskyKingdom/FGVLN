@@ -218,10 +218,10 @@ class VisDataset(YTbDataset):
             for traj in negative_captions:
                 instructions += [instructions[0]]
                 f, b, p, m = self._get_visual_features(traj)
-                features += [f]
-                boxes += [b]
-                probs += [p]
-                masks += [m]
+                features += [features[0]]
+                boxes += [boxes[0]]
+                probs += [probs[0]]
+                masks += [masks[0]]
                 
 
             if self.args.negative_style == 'shuffle_instruction':
@@ -362,31 +362,31 @@ features_reader = load_features_reader(args)
 separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
 testset_path = get_testset_path(args)
 
-# test
-Datset = VisDataset(
-    args = args,
-    caption_path=f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_test{args.feather_note}.json",
-    tokenizer=tokenizer,
-    features_reader=features_reader,
-    masked_vision=False,
-    masked_language=False,
-    training=False,
-    separators=separators,
-    testset_path=testset_path,
-)
-
-# # train
+# # test
 # Datset = VisDataset(
 #     args = args,
-#     caption_path=caption_path,
+#     caption_path=f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_test{args.feather_note}.json",
 #     tokenizer=tokenizer,
 #     features_reader=features_reader,
 #     masked_vision=False,
 #     masked_language=False,
-#     training=True,
+#     training=False,
 #     separators=separators,
 #     testset_path=testset_path,
 # )
+
+# train
+Datset = VisDataset(
+    args = args,
+    caption_path=caption_path,
+    tokenizer=tokenizer,
+    features_reader=features_reader,
+    masked_vision=False,
+    masked_language=False,
+    training=True,
+    separators=separators,
+    testset_path=testset_path,
+)
 
 if local_rank == -1:
     train_sampler = RandomSampler(Datset)
@@ -434,7 +434,7 @@ model = wrap_distributed_model(model, local_rank)
 optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
 
-model.eval()   # CHANGE
+model.train()   # CHANGE
 model.zero_grad()
 
 
@@ -463,7 +463,7 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     loss = torch.tensor(0, device=device).float()
     print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
 
-    # loss.backward()
+    loss.backward()
 
     if (step + 1) % args.gradient_accumulation_steps == 0:
         optimizer.step()            
