@@ -444,6 +444,8 @@ model.eval()   # CHANGE
 model.zero_grad()
 
 
+all_logits = []
+
 for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
     
 
@@ -459,7 +461,6 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     opt_mask = get_mask_options(batch)
     prediction = pad_packed(outputs["ranking"].squeeze(1), opt_mask)
     target = get_ranking_target(batch)
-    print("Prediction: {} \n Target: {}  \n\n".format(prediction.shape,target.shape))
     correct = torch.sum(torch.argmax(prediction, 1) == target).float()
     
     model.zero_grad()
@@ -473,7 +474,14 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     loss += compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
     loss.backward()
 
+    all_logits.append(prediction.detach().tolist())
+
+
     if (step + 1) % args.gradient_accumulation_steps == 0:
         optimizer.step()            
         scheduler.step()
         model.zero_grad()
+
+
+
+print(all_logits)
