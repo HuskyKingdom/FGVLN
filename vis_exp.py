@@ -445,6 +445,8 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
             t.cuda(device=device, non_blocking=True) if hasattr(t, "cuda") else t
             for t in batch
         )
+    
+    print(batch["instr_tokens"])
 
     outputs = model(*get_model_input(batch))
 
