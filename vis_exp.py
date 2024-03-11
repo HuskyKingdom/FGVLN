@@ -462,7 +462,7 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
 
     loss = torch.tensor(0, device=device).float()
     print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
-
+    loss += compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
     loss.backward()
 
     if (step + 1) % args.gradient_accumulation_steps == 0:
