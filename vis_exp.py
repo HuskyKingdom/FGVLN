@@ -428,4 +428,6 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
             for t in batch
         )
 
+    outputs = model(*get_model_input(batch))
 
+    
