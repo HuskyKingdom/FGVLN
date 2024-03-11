@@ -348,7 +348,7 @@ model.to(device)
 model = wrap_distributed_model(model, local_rank)
 
 
-optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
+
 
 
 
@@ -413,6 +413,8 @@ train_data_loader = DataLoader(
         num_workers=args.num_workers,
         pin_memory=True,
     )
+
+optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
 
 model.eval()   # CHANGE
