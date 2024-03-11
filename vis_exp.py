@@ -324,10 +324,6 @@ default_gpu, _, device = set_cuda(args)
 logger = NoneLogger()
 
 
-# create data loaders
-local_rank = get_local_rank(args)
-
-
 
 
 def load_features_reader(args) -> FeaturesReader:
@@ -352,47 +348,8 @@ def get_path(args, task_prefix) ->str:
     return f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{task_prefix}testset{args.feather_note}.json"
 
 
-
-# construct model inputs
-caption_path = f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_train{args.feather_note}.json"
-tokenizer = BertTokenizer.from_pretrained(args.bert_tokenizer)
-features_reader = load_features_reader(args)
-separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
-testset_path = get_testset_path(args)
-
-
-Datset = VisDataset(
-    args = args,
-    caption_path=caption_path,
-    tokenizer=tokenizer,
-    features_reader=features_reader,
-    masked_vision=False,
-    masked_language=False,
-    training=True,
-    separators=separators,
-    testset_path=testset_path,
-)
-
-if local_rank == -1:
-    train_sampler = RandomSampler(Datset)
-
-else:
-    train_sampler = DistributedSampler(Datset)
-
-batch_size = args.batch_size // args.gradient_accumulation_steps
-if local_rank != -1:
-    batch_size = batch_size // dist.get_world_size()
-
-
-train_data_loader = DataLoader(
-        Datset,
-        sampler=train_sampler,
-        batch_size=batch_size,
-        num_workers=args.num_workers,
-        pin_memory=True,
-    )
-
-
+local_rank = get_local_rank(args)
+train_data_loader, test_data_loader, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
 
 
 # load pre-trained model
@@ -400,6 +357,17 @@ train_data_loader = DataLoader(
 # Loading model
 logger.info(f"Loading model")
 config = BERT_CONFIG_FACTORY[args.model_name].from_json_file(args.config_file)
+
+save_folder = get_output_dir(args)
+# save the parameters
+if default_gpu:
+    with open(os.path.join(save_folder, "config.txt"), "w") as fid:
+        print("args:\n{", file=fid)
+        for name, value in vars(args).items():
+            print(f"  '{name}': {value}", file=fid)
+        print("}\n", file=fid)
+        print("config:", file=fid)
+        print(config, file=fid)
 
 
 config.args = args
@@ -415,6 +383,10 @@ else:
 
 model.to(device)
 model = wrap_distributed_model(model, local_rank)
+
+if default_gpu:
+    with open(save_folder / "model.txt", "w") as fid:
+        fid.write(str(model))
 
 optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
