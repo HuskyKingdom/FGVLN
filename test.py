@@ -159,6 +159,7 @@ def eval_epoch(model, data_loader, args):
             output = model(*get_model_input(batch))
             opt_mask = get_mask_options(batch)
             vil_logit = pad_packed(output['ranking'].squeeze(1), opt_mask)
+            print(vil_logit)
 
         for instr_id, logit in zip(instr_ids, vil_logit.tolist()):
             all_scores.append((instr_id, logit))
