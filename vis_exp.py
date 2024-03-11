@@ -403,8 +403,8 @@ if local_rank != -1:
 
 train_data_loader, test_data_loader, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
 
-
-model.eval()   # CHANGE
+model.train()   # CHANGE
+model.zero_grad()
 
 for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
 
