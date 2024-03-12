@@ -97,7 +97,8 @@ def CorrectDis_Rate(y_true, y_pred):
     correct = [x for x in squared_differences if x > 0 ] # correct
     same = [x for x in squared_differences if x == 0 ] # total num of same
     ecp_same_remain = 200 - len(same)
-   
+    
+    print(ecp_same_remain)
     return len(correct)/ecp_same_remain
 
 def Correct_Rate(y_true, y_pred):
@@ -233,9 +234,9 @@ class VisDataset(YTbDataset):
         # new_list_1[-3] = tem
         # new_list_1[-2] = positive_ids[-3]
 
-        # new_list_1 = positive_ids[:] 
+        new_list_1 = positive_ids[:] 
         
-        # new_list_1[1] = negative_random[1][-3]
+        new_list_1[1] = negative_images[1][0]
         # new_list_1[2] = negative_random[1][-2]
         # new_list_1[3] = negative_random[1][-1]
         
