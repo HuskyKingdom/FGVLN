@@ -53,6 +53,31 @@ from utils.dataset.features_reader import FeaturesReader, BnBFeaturesReader, YTb
 from utils.utils_init import get_loss_correct
 from typing import List, Dict, Tuple
 
+
+
+def mean_squared_error(y_true, y_pred):
+    """
+    Calculate the Mean Squared Error between two lists of values.
+    
+    Parameters:
+    - y_true: list of actual values
+    - y_pred: list of predicted values
+    
+    Returns:
+    - mse: Mean Squared Error
+    """
+    # Check if the lengths of the lists match
+    if len(y_true) != len(y_pred):
+        raise ValueError("The lengths of actual and predicted lists do not match.")
+    
+    # Calculate the squared differences and their mean
+    squared_differences = [(actual - predicted) ** 2 for actual, predicted in zip(y_true, y_pred)]
+    mse = sum(squared_differences) / len(y_true)
+    
+    return mse
+
+
+
 def get_device(batch):
     return batch[0].device
 
@@ -482,5 +507,5 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
 
 
 
-
-print(all_logits)
+# taking positive logits
+print(len(all_logits))
