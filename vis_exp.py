@@ -191,7 +191,7 @@ class VisDataset(YTbDataset):
         new_list_1 = positive_ids[:] 
         
         new_list_1[1] = negative_images[1][1]
-        new_list_1[2] = negative_images[1][1]
+        new_list_1[2] = negative_images[1][2]
         # new_list_1[2] = negative_images[1][2]
         # new_list_1[3] = negative_images[1][1]
         
