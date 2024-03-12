@@ -77,7 +77,7 @@ def DisRate(y_true, y_pred):
     return len(filtered_list)
 
 
-def Correct_Rate(y_true, y_pred):
+def CorrectDis_Rate(y_true, y_pred):
     """
     Calculate the Mean Absolute Error between two lists of values.
     
@@ -96,6 +96,27 @@ def Correct_Rate(y_true, y_pred):
     squared_differences = [actual - predicted for actual, predicted in zip(y_true, y_pred)]
     filtered_list = [x for x in squared_differences if x >= 0 ]
     filtered_list = [x for x in filtered_list if abs(x) >= 1 ]
+   
+    return len(filtered_list)
+
+def Correct_Rate(y_true, y_pred):
+    """
+    Calculate the Mean Absolute Error between two lists of values.
+    
+    Parameters:
+    - y_true: list of actual values
+    - y_pred: list of predicted values
+    
+    Returns:
+    - mse: Mean Squared Error
+    """
+    # Check if the lengths of the lists match
+    if len(y_true) != len(y_pred):
+        raise ValueError("The lengths of actual and predicted lists do not match.")
+    
+    # Calculate the squared differences and their mean
+    squared_differences = [actual - predicted for actual, predicted in zip(y_true, y_pred)]
+    filtered_list = [x for x in squared_differences if x >= 0 ]
    
     return len(filtered_list)
 
