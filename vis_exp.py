@@ -516,4 +516,5 @@ for item in all_logits:
         negative_logits.append(logit[2])
 
 
+print(len(positive_logits))
 print(mean_abs_error(positive_logits,negative_logits))
