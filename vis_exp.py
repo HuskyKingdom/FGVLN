@@ -233,15 +233,15 @@ class VisDataset(YTbDataset):
         # new_list_1[-3] = tem
         # new_list_1[-2] = positive_ids[-3]
 
-        new_list_1 = positive_ids[:] 
+        # new_list_1 = positive_ids[:] 
         
-        new_list_1[1] = negative_random[1][-3]
-        new_list_1[2] = negative_random[1][-2]
-        new_list_1[3] = negative_random[1][-1]
+        # new_list_1[1] = negative_random[1][-3]
+        # new_list_1[2] = negative_random[1][-2]
+        # new_list_1[3] = negative_random[1][-1]
         
 
-        new_list.append(new_list_1)
-        negative_captions = new_list # replacement
+        # new_list.append(new_list_1)
+        # negative_captions = new_list # replacement
 
         
         # print("positive_ids {} , \n negative_captions {} , \n \n".format(positive_ids,negative_captions))
@@ -563,7 +563,7 @@ negative_logits = []
 for item in all_logits:
     for logit in item:
         positive_logits.append(logit[0])
-        negative_logits.append(logit[2])
+        negative_logits.append(logit[3])
 
 
 print(len(positive_logits))
