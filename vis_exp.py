@@ -567,4 +567,4 @@ for item in all_logits:
 
 
 print(len(positive_logits))
-print(Correct_Rate(positive_logits,negative_logits))
+print(CorrectDis_Rate(positive_logits,negative_logits))
