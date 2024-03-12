@@ -194,7 +194,7 @@ class VisDataset(YTbDataset):
         
 
         new_list.append(new_list_1)
-        print(new_list)
+        print(positive_ids)
         negative_captions = new_list # replacement
 
         
