@@ -72,7 +72,7 @@ def DisRate(y_true, y_pred):
     
     # Calculate the squared differences and their mean
     squared_differences = [abs(actual - predicted) for actual, predicted in zip(y_true, y_pred)]
-    filtered_list = [x for x in squared_differences if x >= 1 ]
+    filtered_list = [x for x in squared_differences if x >= 1 or x ==0 ]
    
     return len(filtered_list)
 
