@@ -55,7 +55,7 @@ from typing import List, Dict, Tuple
 
 
 
-def mean_abs_error(y_true, y_pred):
+def DisRate(y_true, y_pred):
     """
     Calculate the Mean Absolute Error between two lists of values.
     
@@ -73,6 +73,29 @@ def mean_abs_error(y_true, y_pred):
     # Calculate the squared differences and their mean
     squared_differences = [abs(actual - predicted) for actual, predicted in zip(y_true, y_pred)]
     filtered_list = [x for x in squared_differences if x >= 1 ]
+   
+    return len(filtered_list)
+
+
+def Correct_Rate(y_true, y_pred):
+    """
+    Calculate the Mean Absolute Error between two lists of values.
+    
+    Parameters:
+    - y_true: list of actual values
+    - y_pred: list of predicted values
+    
+    Returns:
+    - mse: Mean Squared Error
+    """
+    # Check if the lengths of the lists match
+    if len(y_true) != len(y_pred):
+        raise ValueError("The lengths of actual and predicted lists do not match.")
+    
+    # Calculate the squared differences and their mean
+    squared_differences = [actual - predicted for actual, predicted in zip(y_true, y_pred)]
+    filtered_list = [x for x in squared_differences if x >= 0 ]
+    filtered_list = [x for x in filtered_list if x >= 1 ]
    
     return len(filtered_list)
 
@@ -192,7 +215,6 @@ class VisDataset(YTbDataset):
         
         new_list_1[1] = negative_images[1][1]
         new_list_1[2] = negative_images[1][2]
-        new_list_1[4] = negative_images[1][3]
         # new_list_1[3] = negative_images[1][1]
         
 
@@ -523,4 +545,4 @@ for item in all_logits:
 
 
 print(len(positive_logits))
-print(mean_abs_error(positive_logits,negative_logits))
+print(Correct_Rate(positive_logits,negative_logits))
