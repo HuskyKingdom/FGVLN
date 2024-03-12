@@ -563,7 +563,7 @@ negative_logits = []
 for item in all_logits:
     for logit in item:
         positive_logits.append(logit[0])
-        negative_logits.append(logit[3])
+        negative_logits.append(logit[5])
 
 
 print(len(positive_logits))
