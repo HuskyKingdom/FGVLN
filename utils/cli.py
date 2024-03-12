@@ -155,6 +155,12 @@ def get_parser() -> argparse.ArgumentParser:
         help="The maximum number of viewpoints tokens used by the model (default: 8)",
     )
     parser.add_argument(
+        "--flip",
+        default=-1,
+        type=int,
+        help="Flip index.",
+    )
+    parser.add_argument(
         "--max_num_boxes",
         default=101,
         type=int,
