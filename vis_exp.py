@@ -241,8 +241,8 @@ class VisDataset(YTbDataset):
         # new_list_1[3] = negative_random[1][-1]
         
 
-        # new_list.append(new_list_1)
-        # negative_captions = new_list # replacement
+        new_list.append(new_list_1)
+        negative_captions = new_list # replacement
 
         
         # print("positive_ids {} , \n negative_captions {} , \n \n".format(positive_ids,negative_captions))
