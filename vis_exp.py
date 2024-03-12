@@ -94,7 +94,7 @@ def Correct_Rate(y_true, y_pred):
     
     # Calculate the squared differences and their mean
     squared_differences = [actual - predicted for actual, predicted in zip(y_true, y_pred)]
-    filtered_list = [x for x in squared_differences if x >= 0 ]
+    filtered_list = [x for x in squared_differences if x > 0 ]
     filtered_list = [x for x in filtered_list if x >= 1 ]
    
     return len(filtered_list)
@@ -215,7 +215,7 @@ class VisDataset(YTbDataset):
         
         new_list_1[1] = negative_images[1][1]
         new_list_1[2] = negative_images[1][2]
-        new_list_1[3] = negative_images[1][3]
+        # new_list_1[3] = negative_images[1][3]
         
 
         new_list.append(new_list_1)
