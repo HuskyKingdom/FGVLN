@@ -94,10 +94,11 @@ def CorrectDis_Rate(y_true, y_pred):
     
     # Calculate the squared differences and their mean
     squared_differences = [actual - predicted for actual, predicted in zip(y_true, y_pred)]
-    filtered_list = [x for x in squared_differences if x >= 0 ]
-    filtered_list = [x for x in filtered_list if abs(x) >= 1 or x == 0]
+    correct = [x for x in squared_differences if x > 0 ] # correct
+    same = [x for x in squared_differences if x == 0 ] # total num of same
+    ecp_same_remain = 200 - len(same)
    
-    return len(filtered_list)
+    return len(correct)/ecp_same_remain
 
 def Correct_Rate(y_true, y_pred):
     """
