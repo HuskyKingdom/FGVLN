@@ -99,6 +99,7 @@ def CorrectDis_Rate(y_true, y_pred):
     ecp_same_remain = 200 - len(same)
     
     print(ecp_same_remain)
+    print(squared_differences)
     return len(correct)/ecp_same_remain
 
 def Correct_Rate(y_true, y_pred):
@@ -249,7 +250,7 @@ class VisDataset(YTbDataset):
 
         # get the order label of trajectory
         ordering_target = []
-        order_atteneded_visual_feature = 1
+        order_atteneded_visual_feature = 1 
         
         prob_order = 1
             
