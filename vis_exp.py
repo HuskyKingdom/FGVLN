@@ -189,7 +189,7 @@ class VisDataset(YTbDataset):
         # new_list_1[-2] = positive_ids[-3]
 
         new_list_1 = positive_ids[:] 
-        new_list_1[2] = positive_ids[3]
+        new_list_1[int(self.args.flip)] = positive_ids[3]
         
 
         new_list.append(new_list_1)
