@@ -55,9 +55,9 @@ from typing import List, Dict, Tuple
 
 
 
-def mean_squared_error(y_true, y_pred):
+def mean_abs_error(y_true, y_pred):
     """
-    Calculate the Mean Squared Error between two lists of values.
+    Calculate the Mean Absolute Error between two lists of values.
     
     Parameters:
     - y_true: list of actual values
@@ -71,7 +71,7 @@ def mean_squared_error(y_true, y_pred):
         raise ValueError("The lengths of actual and predicted lists do not match.")
     
     # Calculate the squared differences and their mean
-    squared_differences = [(actual - predicted) ** 2 for actual, predicted in zip(y_true, y_pred)]
+    squared_differences = [abs(actual - predicted) for actual, predicted in zip(y_true, y_pred)]
     mse = sum(squared_differences) / len(y_true)
     
     return mse
@@ -507,5 +507,13 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
 
 
 
-# taking positive logits
-print(len(all_logits))
+# taking positive & negative logits
+positive_logits = []
+negative_logits = []
+for item in all_logits:
+    for logit in item:
+        positive_logits.append(logit[0])
+        negative_logits.append(logit[2])
+
+
+print(mean_abs_error(positive_logits,negative_logits))
