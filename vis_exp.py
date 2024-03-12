@@ -95,7 +95,7 @@ def CorrectDis_Rate(y_true, y_pred):
     # Calculate the squared differences and their mean
     squared_differences = [actual - predicted for actual, predicted in zip(y_true, y_pred)]
     filtered_list = [x for x in squared_differences if x >= 0 ]
-    filtered_list = [x for x in filtered_list if abs(x) >= 1 ]
+    filtered_list = [x for x in filtered_list if abs(x) >= 1 or x == 0]
    
     return len(filtered_list)
 
@@ -566,4 +566,4 @@ for item in all_logits:
 
 
 print(len(positive_logits))
-print(DisRate(positive_logits,negative_logits))
+print(Correct_Rate(positive_logits,negative_logits))
