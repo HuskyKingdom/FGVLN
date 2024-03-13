@@ -741,7 +741,7 @@ class BeamDataset(Dataset):
                         selected_paths.append(beam_paths[idx])
             
             temp = selected_paths[0][:]
-            temp[0] = selected_paths[1][-1]
+            temp[2] = selected_paths[1][-1]
             selected_paths[-1] = temp
            
             # shuffle the visual features from the ground truth as a free negative path
