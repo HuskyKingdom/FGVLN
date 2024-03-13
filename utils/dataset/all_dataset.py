@@ -743,7 +743,7 @@ class BeamDataset(Dataset):
             temp = selected_paths[0][:]
             temp[1] = selected_paths[1][-1]
             selected_paths[-1] = temp
-
+            print(len(selected_paths))
             # shuffle the visual features from the ground truth as a free negative path
             path = self._vln_data[vln_index]["path"]
             path_range = range(len(path))
