@@ -531,7 +531,7 @@ model.zero_grad()
 
 all_logits = []
 
-for step, batch in enumerate(tqdm(val_seen_data_loader, disable= not (default_gpu))):
+for step, batch in enumerate(tqdm(val_unseen_data_loader, disable= not (default_gpu))):
     
 
     batch = tuple(
