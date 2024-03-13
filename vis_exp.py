@@ -497,8 +497,7 @@ testset_path = get_testset_path(args)
 #         num_workers=args.num_workers,
 #         pin_memory=True,
 #     )
-
-
+args.pretrain = False
 train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
 
 
