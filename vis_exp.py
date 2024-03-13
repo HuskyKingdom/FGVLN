@@ -8,7 +8,7 @@ from utils.dataset.dataset_init import load_dataloader
 from utils.misc import get_output_dir, set_seed, NoneLogger, logo_print, exp_saver, get_logger
 from lily import Lily, BERT_CONFIG_FACTORY
 import torch.distributed as dist
-from utils.dataset.all_dataset import YTbDataset
+from utils.dataset.all_dataset import YTbDataset,BeamDataset
 import torch
 import random
 import numpy as np
@@ -51,7 +51,7 @@ from torch.utils.data.distributed import DistributedSampler
 from transformers import BertTokenizer
 from utils.dataset.features_reader import FeaturesReader, BnBFeaturesReader, YTbFeaturesReader, PanoFeaturesReader
 from utils.utils_init import get_loss_correct
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Union
 
 
 
@@ -394,6 +394,326 @@ class VisDataset(YTbDataset):
         )
 
 
+class DownStreamDataset(BeamDataset):
+
+        def __getitem__(self, beam_index: int):
+            vln_index = self._beam_to_vln[beam_index]
+            vln_item = self._vln_data[vln_index]
+
+            self._visual_data = {}
+            self._visual_data['beam_index'] = beam_index
+            self._visual_data['path'] = []
+            self._visual_data['headings'] = []
+            self._visual_data['next_headings'] = []
+            self._visual_data['instructions'] = vln_item["instructions"]
+
+            # get beam info
+            path_id, instruction_index = map(
+                int, self._beam_data[beam_index]["instr_id"].split("_")
+            )
+
+            # get vln info
+            scan_id = vln_item["scan"]
+            heading = vln_item["heading"]
+            gt_path = vln_item["path"]
+
+            # get the instruction data
+            instr_tokens = torch.tensor(vln_item["instruction_tokens"][instruction_index])
+            instr_mask = instr_tokens > 0
+
+            segment_ids = torch.zeros_like(instr_tokens)
+
+            instr_highlights = torch.tensor([])
+
+            # get all of the paths
+            beam_paths = []
+
+            for ranked_path in self._beam_data[beam_index]["ranked_paths"]:
+                beam_paths.append([p for p, _, _ in ranked_path])
+
+            success = self._get_path_success(scan_id, gt_path, beam_paths)
+            target: Union[List[int], int]
+            order_labels = []
+
+            # select one positive and three negative paths
+            if self._training:
+                # special case for data_aug with negative samples
+                if "positive" in vln_item and not vln_item["positive"][instruction_index]:
+                    target = -1
+                    selected_paths = beam_paths[: self._num_beams]
+                    assert not self._ground_truth_trajectory, "Not compatible"
+
+                # not enough positive or negative paths (this should be rare) we only need one successful path
+                if np.sum(success == 1) == 0 or np.sum(success == 0) < self._num_beams - 1: # TODO why is "self._num_beams - 1"?
+                    target = -1  # default ignore index
+                    if self._ground_truth_trajectory:
+                        selected_paths = [self._vln_data[vln_index]["path"]] + beam_paths[
+                            : self._num_beams - 1
+                        ]
+                    else:
+                        selected_paths = beam_paths[: self._num_beams]
+                else:
+                    target = 0
+                    selected_paths = []
+                    # first select a positive
+                    if self._ground_truth_trajectory:
+                        selected_paths.append(self._vln_data[vln_index]["path"])
+                    else:
+                        idx = np.random.choice(np.where(success == 1)[0])  # type: ignore
+                        selected_paths.append(beam_paths[idx])
+                    
+                        
+                    if not self._traj_judge:
+                        # next select three negatives
+                        idxs = np.random.choice(  # type: ignore
+                            np.where(success == 0)[0], size=self._num_beams - 1, replace=False
+                        )
+                        for idx in idxs:
+                            selected_paths.append(beam_paths[idx])
+                
+                # temp = selected_paths[0][:]
+                # temp[1] = selected_paths[1][-1]
+                # selected_paths[-1] = temp
+
+                # shuffle the visual features from the ground truth as a free negative path
+                path = self._vln_data[vln_index]["path"]
+                path_range = range(len(path))
+
+                if self._shuffle_visual_features:
+
+                    # we only shuffle the order of positive samples
+                    for corr, _ in zip(self._shuffler(path_range), range(self.args.num_negatives)):
+                        order_labels.append(corr)
+                        corr_path = [path[i] for i in corr]
+                        selected_paths += [corr_path]
+                else:
+                    if not self._traj_judge:
+                        order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
+            else:
+                if self._traj_judge:
+                    target = np.zeros(len(beam_paths))
+                else:
+                    target = success
+                selected_paths = beam_paths
+
+                # # This should be used only for testing the influence of shuffled sequences!
+                # if self._shuffle_visual_features:
+                #     if isinstance(target, int):
+                #         raise ValueError("fix mypy")
+
+                #     # we shuffled all positive trajectories
+                #     # the target is now zero everywhere
+                #     for i in np.arange(len(success))[success.astype("bool")]:
+                #         if i > self.args.num_negatives:
+                #             break
+                #         selected_paths.append(next(self._shuffler(selected_paths[i])))
+                #         target = np.append(target, 0)
+                
+                # shuffle the visual features from the ground truth as a free negative path
+                if self._shuffle_visual_features:
+                    if isinstance(target, int):
+                        raise ValueError("fix mypy")
+
+                    # we shuffled all positive trajectories
+                    # the target is now zero everywhere
+                    for i in np.arange(len(success))[success.astype("bool")]:
+                        if i > self.args.num_negatives:
+                            break
+                        selected_paths.append(next(self._shuffler(selected_paths[i])))
+                        target = np.append(target, 0)
+                
+                if self._batch_size !=1 and len(target) != self._num_beams:
+                    target = np.tile(target,int(self._num_beams/len(target))+1)[:self._num_beams]
+                    selected_paths = (selected_paths*(int(self._num_beams/len(selected_paths))+1))[:self._num_beams]
+
+                order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
+            
+
+            
+            # get path features
+            features, boxes, probs, masks = [], [], [], []
+            if self._training and self._traj_judge:
+                # positive
+                path_length = min(len(selected_paths[0]), self.args.max_path_length)
+                pos = selected_paths[0][:path_length]
+                path_features = [list(self._get_path_features(scan_id, pos, heading))]
+
+                path_range = range(len(pos))
+                normal_path = list(path_range)
+
+                # get negative
+                max_out_num = 4 # max number of out_listing
+
+                shuffle_type = random.randint(1,3)
+                
+                if shuffle_type == 1:
+                    # shuffle the order of the same path
+                    for corr, _ in zip(self._shuffler(path_range), range(self.args.num_negatives)):
+                        order_labels.append(corr)
+                        path = [pos[i] for i in corr]
+                        path_features.append(list(self._get_path_features(scan_id, path, heading)))
+                elif shuffle_type == 2:
+                    # shuffle the order of positive samples
+                    for corr, _ in zip(self._shuffler(path_range), range(self.args.num_negatives)):
+                        order_labels.append(corr)
+                        sop_path = [self._visual_data['path'][0][i] for i in corr]
+                        sop_headings = [self._visual_data['headings'][0][i] for i in corr]
+                        sop_next_headings = [self._visual_data['next_headings'][0][i] for i in corr]
+                        self._visual_data['path'].append(sop_path)
+                        self._visual_data['headings'].append(sop_headings)
+                        self._visual_data['next_headings'].append(sop_next_headings)
+                        f = []
+                        b = []
+                        p = []
+                        m =[]
+                        for i in path_range:
+                            f.append(path_features[0][0][corr[i]])
+                            b.append(path_features[0][1][corr[i]])
+                            p.append(path_features[0][2][corr[i]])
+                            m.append(path_features[0][3][corr[i]])
+                        # pad path lists (if needed)
+                        for path_idx in range(path_length, self.args.max_path_length):
+                            f.append(path_features[0][0][path_idx])
+                            b.append(path_features[0][1][path_idx])
+                            p.append(path_features[0][2][path_idx])
+                            m.append(path_features[0][3][path_idx])
+                        path_features.append([f, b, p, m])
+                elif shuffle_type == 3:
+                    # other scan
+                    index = random.randint(0, len(self._vln_data) - 1)
+                    while(index == vln_index):
+                        # avoid the same path
+                        index = random.randint(0, len(self._vln_data) - 1)
+                    path2 = self._vln_data[index]["path"]
+                    scan_id2 = self._vln_data[index]["scan"]
+                    for _ in range(self.args.num_negatives):
+                        order_labels.append(normal_path)
+                        
+                        min_len = min(len(pos), len(path2))
+                        out_num = random.randint(1, min(max_out_num, min_len)) # number of out_listing
+                        temp = path_features[0].copy()
+
+                        temp_path = self._visual_data['path'][0].copy()
+                        temp_headings = self._visual_data['headings'][0].copy()
+                        temp_next_headings = self._visual_data['next_headings'][0].copy()
+                        # use self to record information
+                        self._temp_path=[]
+                        self._temp_headings=[]
+                        self._temp_next_headings=[]
+
+                        for i in random.sample(list(range(min_len)), out_num):
+                            # replace out_ix of the positive path with other path (different scan)
+                            f, b, p, m = self._get_feature(scan_id2, path2[i], i)
+                            temp[0][i] = f
+                            temp[1][i] = b
+                            temp[2][i] = p
+                            temp[3][i] = m
+                            temp_path[i] = self._temp_path
+                            temp_headings[i] = self._temp_headings
+                            temp_next_headings[i] = self._temp_next_headings
+                        path_features.append(temp)
+
+                        self._visual_data['path'].append(temp_path)
+                        self._visual_data['headings'].append(temp_headings)
+                        self._visual_data['next_headings'].append(temp_next_headings)
+
+                for i in path_features:
+                    features.append(np.vstack(i[0]))
+                    boxes.append(np.vstack(i[1]))
+                    probs.append(np.vstack(i[2]))
+                    masks.append(np.hstack(i[3]))
+            else:
+                for path in selected_paths:
+                    f, b, p, m = self._get_path_features(scan_id, path, heading)
+                    features.append(np.vstack(f))
+                    boxes.append(np.vstack(b))
+                    probs.append(np.vstack(p))
+                    masks.append(np.hstack(m))
+
+
+            # get the order label of trajectory
+            ordering_target = []
+            order_atteneded_visual_feature = 1
+
+            prob_order = 1
+
+            for random_order_path in range(len(order_labels)):
+                if prob_order < 0.7:
+                    order_atteneded_visual_feature = 1
+                    max_length = min(self.args.max_path_length, len(order_labels[random_order_path]))
+
+                    negative_path_order = order_labels[random_order_path][:max_length]
+
+                    negative_path_order +=  [-1] * (self.args.max_path_length - len(order_labels[random_order_path]))
+
+                    ordering_target.append(negative_path_order)
+                else:
+                    order_atteneded_visual_feature = 0
+                    max_length = min(self.args.max_path_length, len(selected_paths[0]))
+
+                    postive_path_order = [i for i in range(len(selected_paths[0]))][:max_length]
+
+                    postive_path_order += [-1] * (self.args.max_path_length - len(selected_paths[0]))
+
+                    ordering_target.append(postive_path_order)
+
+
+            # convert data into tensors
+            image_features = torch.from_numpy(np.array(features)).float()  # torch.tensor(features).float()
+            image_boxes = torch.from_numpy(np.array(boxes)).float()
+            image_probs = torch.from_numpy(np.array(probs)).float()
+            image_masks = torch.from_numpy(np.array(masks)).long()
+            instr_tokens = instr_tokens.repeat(len(features), 1).long()
+            instr_mask = instr_mask.repeat(len(features), 1).long()
+            segment_ids = segment_ids.repeat(len(features), 1).long()
+            instr_highlights = instr_highlights.repeat(len(features), 1).long()
+
+            # randomly mask image features
+            if self._masked_vision:
+                image_features, image_targets, image_targets_mask = randomize_regions(
+                    image_features, image_probs, image_masks
+                )
+            else:
+                image_targets = torch.ones_like(image_probs) / image_probs.shape[-1]
+                image_targets_mask = torch.zeros_like(image_masks)
+
+            # randomly mask instruction tokens
+            if self._masked_language:
+                instr_tokens, instr_targets = randomize_tokens(
+                    instr_tokens, instr_mask, self._tokenizer, self.args
+                )
+            else:
+                instr_targets = torch.ones_like(instr_tokens) * -1
+
+            # construct null return items
+            co_attention_mask = torch.zeros(
+                2, self.args.max_path_length * self.args.max_num_boxes, self.args.max_instruction_length
+            ).long()
+            instr_id = torch.tensor([path_id, instruction_index]).long()
+
+            target = torch.tensor(target).long()
+            ordering_target = torch.tensor(ordering_target)
+            
+
+            return (
+                target,
+                image_features,
+                image_boxes,
+                image_masks,
+                image_targets,
+                image_targets_mask,
+                instr_tokens,
+                instr_mask,
+                instr_targets,
+                instr_highlights,
+                segment_ids,
+                co_attention_mask,
+                instr_id,
+                torch.ones(image_features.shape[0]).bool(),
+                ordering_target,
+                order_atteneded_visual_feature,
+            )
+
 
 # command line parsing
 parser = get_parser()
@@ -445,31 +765,36 @@ features_reader = load_features_reader(args)
 separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
 testset_path = get_testset_path(args)
 
-# test
-Datset = VisDataset(
-    args = args,
-    caption_path=f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_test{args.feather_note}.json",
-    tokenizer=tokenizer,
-    features_reader=features_reader,
-    masked_vision=False,
-    masked_language=False,
-    training=False,
-    separators=separators,
-    testset_path=testset_path,
-)
-
-# # train
+# # test
 # Datset = VisDataset(
 #     args = args,
-#     caption_path=caption_path,
+#     caption_path=f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_test{args.feather_note}.json",
 #     tokenizer=tokenizer,
 #     features_reader=features_reader,
 #     masked_vision=False,
 #     masked_language=False,
-#     training=True,
+#     training=False,
 #     separators=separators,
 #     testset_path=testset_path,
 # )
+
+
+Datset = DownStreamDataset(
+        args = args,
+        vln_path=f"data/task/{args.r2r_prefix}R2R_{tag}.json",
+        beam_path=f"data/beamsearch/{args.beam_prefix}beams_{tag}.json",
+        tokenizer=tokenizer,
+        features_reader=features_reader,
+        num_beams=4,
+        num_beams_strict=False,
+        training=True,
+        masked_vision=args.masked_vision,
+        masked_language=args.masked_language,
+        default_gpu=default_gpu,
+        ground_truth_trajectory=False,
+        shuffle_visual_features=args.shuffle_visual_features,
+    )
+
 
 if local_rank == -1:
     train_sampler = RandomSampler(Datset)
@@ -565,7 +890,7 @@ negative_logits = []
 for item in all_logits:
     for logit in item:
         positive_logits.append(logit[0])
-        negative_logits.append(logit[2])
+        negative_logits.append(logit[3])
 
 
 print(len(positive_logits))

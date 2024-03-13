@@ -199,7 +199,7 @@ def train_epoch(
     epoch, model, optimizer, scheduler, data_loader, writer, default_gpu, args, logger
 ) -> None:
     device = next(model.parameters()).device
-    model.eval()   # CHANGE
+    model.train()   # CHANGE
     model.zero_grad()
 
     for step, batch in enumerate(tqdm(data_loader, disable= not (default_gpu))):
