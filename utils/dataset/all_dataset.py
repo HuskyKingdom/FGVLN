@@ -696,12 +696,11 @@ class BeamDataset(Dataset):
 
         # get all of the paths
         beam_paths = []
-        outdomain_beam = []
+
 
         for ranked_path in self._beam_data[beam_index]["ranked_paths"]:
             beam_paths.append([p for p, _, _ in ranked_path])
-        for ranked_path in self._beam_data[beam_index + 1]["ranked_paths"]:
-            outdomain_beam.append([p for p, _, _ in ranked_path])
+
 
         success = self._get_path_success(scan_id, gt_path, beam_paths)
         target: Union[List[int], int]
@@ -744,9 +743,9 @@ class BeamDataset(Dataset):
                         selected_paths.append(beam_paths[idx])
             
             temp = selected_paths[0][:]
-            temp[0] = outdomain_beam[0][-1]
-            # temp[2] = selected_paths[1][-2]
-            # temp[3] = selected_paths[1][-1]
+            temp[1] = selected_paths[1][-2]
+            temp[2] = selected_paths[1][-2]
+            temp[3] = selected_paths[1][-1]
             selected_paths[-1] = temp
            
             # shuffle the visual features from the ground truth as a free negative path
