@@ -740,9 +740,9 @@ class BeamDataset(Dataset):
                     for idx in idxs:
                         selected_paths.append(beam_paths[idx])
             
-            temp = selected_paths[0][:]
+            # temp = selected_paths[0][:]
             # temp[1] = selected_paths[1][-1]
-            selected_paths[-1] = temp
+            # selected_paths[-1] = temp
            
             # shuffle the visual features from the ground truth as a free negative path
             path = self._vln_data[vln_index]["path"]
@@ -759,7 +759,7 @@ class BeamDataset(Dataset):
                 if not self._traj_judge:
                     order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
 
-            print(len(selected_paths))
+            
         else:
             if self._traj_judge:
                 target = np.zeros(len(beam_paths))
