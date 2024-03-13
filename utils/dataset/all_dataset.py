@@ -730,7 +730,8 @@ class BeamDataset(Dataset):
                 else:
                     idx = np.random.choice(np.where(success == 1)[0])  # type: ignore
                     selected_paths.append(beam_paths[idx])
-                    
+                
+                print(selected_paths)
                     
                 if not self._traj_judge:
                     # next select three negatives

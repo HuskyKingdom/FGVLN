@@ -8,3 +8,4 @@ python vis_exp.py --pre_dataset ytb     --from_pretrained data/trained/pretrain_
 
 
 python train.py --from_pretrained --from_pretrained data/trained/trained_best_unseen.bin --save_name ytbvln_2e5_500_MRT_ranking_30M_30RS --shuffle_visual_features --ranking --batch_size 16 --num_epochs 30
+
