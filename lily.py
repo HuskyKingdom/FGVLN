@@ -68,7 +68,7 @@ class Lily(PreTrainedModel):
         order_atteneded_visual_feature=None,
     ) -> Dict[str, torch.Tensor]:
         
-        print(instr_tokens.shape)
+        print(image_features.shape)
 
         (
             sequence_output_t,
