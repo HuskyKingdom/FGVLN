@@ -971,9 +971,9 @@ class BeamDataset(Dataset):
         
 
         return (
-            target,
-            image_features,
-            image_boxes,
+            target, # ranking target
+            image_features, # vit image features
+            image_boxes, # vit image box features
             image_masks,
             image_targets,
             image_targets_mask,
