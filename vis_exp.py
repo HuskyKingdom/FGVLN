@@ -456,7 +456,7 @@ Datset = VisDataset(
     features_reader=features_reader,
     masked_vision=False,
     masked_language=False,
-    training=False,
+    training=True,
     separators=separators,
     testset_path=testset_path,
 )
