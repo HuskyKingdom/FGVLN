@@ -451,12 +451,12 @@ testset_path = get_testset_path(args)
 # # test
 Datset = VisDataset(
     args = args,
-    caption_path=caption_path,
+    caption_path=f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_test{args.feather_note}.json",
     tokenizer=tokenizer,
     features_reader=features_reader,
     masked_vision=False,
     masked_language=False,
-    training=True,
+    training=False,
     separators=separators,
     testset_path=testset_path,
 )
@@ -578,3 +578,7 @@ for item in all_logits:
 
 print(len(positive_logits))
 print(CorrectDis_Rate(positive_logits,negative_logits))
+
+
+
+
