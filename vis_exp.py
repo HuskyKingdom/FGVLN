@@ -449,17 +449,17 @@ separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
 testset_path = get_testset_path(args)
 
 # # test
-# Datset = VisDataset(
-#     args = args,
-#     caption_path=f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_test{args.feather_note}.json",
-#     tokenizer=tokenizer,
-#     features_reader=features_reader,
-#     masked_vision=False,
-#     masked_language=False,
-#     training=False,
-#     separators=separators,
-#     testset_path=testset_path,
-# )
+Datset = VisDataset(
+    args = args,
+    caption_path=caption_path,
+    tokenizer=tokenizer,
+    features_reader=features_reader,
+    masked_vision=False,
+    masked_language=False,
+    training=True,
+    separators=separators,
+    testset_path=testset_path,
+)
 
 
 # Datset = DownStreamDataset(
@@ -479,26 +479,27 @@ testset_path = get_testset_path(args)
 #     )
 
 
-# if local_rank == -1:
-#     train_sampler = RandomSampler(Datset)
-# else:
-#     train_sampler = DistributedSampler(Datset)
+if local_rank == -1:
+    train_sampler = RandomSampler(Datset)
+else:
+    train_sampler = DistributedSampler(Datset)
 
-# batch_size = args.batch_size // args.gradient_accumulation_steps
-# if local_rank != -1:
-#     batch_size = batch_size // dist.get_world_size()
+batch_size = args.batch_size // args.gradient_accumulation_steps
+if local_rank != -1:
+    batch_size = batch_size // dist.get_world_size()
 
-# print(local_rank)
+print(local_rank)
 
-# train_data_loader = DataLoader(
-#         Datset,
-#         sampler=train_sampler,
-#         batch_size=batch_size,
-#         num_workers=args.num_workers,
-#         pin_memory=True,
-#     )
-args.pretrain = False
-train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
+train_data_loader = DataLoader(
+        Datset,
+        sampler=train_sampler,
+        batch_size=batch_size,
+        num_workers=args.num_workers,
+        pin_memory=True,
+    )
+
+# args.pretrain = False
+# train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
 
 
 # load pre-trained model
@@ -531,7 +532,7 @@ model.zero_grad()
 
 all_logits = []
 
-for step, batch in enumerate(tqdm(val_unseen_data_loader, disable= not (default_gpu))):
+for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))):
     
 
     batch = tuple(
@@ -539,7 +540,6 @@ for step, batch in enumerate(tqdm(val_unseen_data_loader, disable= not (default_
             for t in batch
         )
     
-    print(batch[0])
 
     outputs = model(*get_model_input(batch))
 
@@ -573,7 +573,7 @@ negative_logits = []
 for item in all_logits:
     for logit in item:
         positive_logits.append(logit[0])
-        negative_logits.append(logit[3])
+        negative_logits.append(logit[2])
 
 
 print(len(positive_logits))

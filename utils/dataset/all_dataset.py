@@ -566,6 +566,190 @@ class BnBDataset(BaseDataset):
     def get_feature_key(self, listing_id, pid):
         return f"{listing_id}-{pid}"
 
+class FGRLDataset(YTbDataset):
+    
+    def __getitem__(self, index: int):
+
+        
+        # get a random listing_id
+        
+        listing_id = self._listing_ids[index]
+
+
+        # select negative and positive photo ids
+        (
+            positive_ids,
+            negative_captions,
+            negative_images,
+            negative_random,
+            order_labels
+        ) = self._pick_photo_ids(listing_id)
+        
+        new_list = [positive_ids[:-1]] 
+        new_list[0].append(positive_ids[0])
+
+        # tem = positive_ids[-2]
+        # new_list_1 = positive_ids[:] 
+        # new_list_1[-3] = tem
+        # new_list_1[-2] = positive_ids[-3]
+
+        new_list_1 = positive_ids[:] 
+        
+        new_list_1[1] = negative_images[1][0]
+        # new_list_1[2] = negative_random[1][-2]
+        # new_list_1[3] = negative_random[1][-1]
+        
+
+        new_list.append(new_list_1)
+        negative_captions = new_list # replacement
+
+        
+        # print("positive_ids {} , \n negative_captions {} , \n \n".format(positive_ids,negative_captions))
+
+        # get the order label of trajectory
+        ordering_target = []
+        order_atteneded_visual_feature = 1 
+        
+        prob_order = 1
+            
+        for key in order_labels:
+            if key == "normal_idx" or key == "negative_captions_idx":
+                # Skip normal_idx and negative_captions_idx and consider only negative_images_idx
+                continue
+            else:
+                for random_order_path in range(len(order_labels[key])):
+                    if prob_order < 0.7:
+                        order_atteneded_visual_feature = 1 # 1 indicates random and 0 indicates normal
+                        temp = [v for v in order_labels[key][random_order_path] ]
+                        # If the path length is too short, it is automatically filled to the longest path
+                        temp +=  [-1] * (self.args.max_path_length - len(positive_ids))
+                        ordering_target.append(temp)
+                    else:
+                        order_atteneded_visual_feature = 0 # 1 indicates random and 0 indicates normal
+                        ordering_target.append([i for i in range(len(positive_ids))] + \
+                                                [-1] * (self.args.max_path_length - len(positive_ids)))
+
+        # get the positive pair
+        build_instruction = random.choice(self._build_instructions)
+        self.templete = None
+        
+        instructions = [self.generate_instruction(build_instruction,positive_ids)]
+        f, b, p, m = self._get_visual_features(positive_ids)
+        features, boxes, probs, masks = [f], [b], [p], [m] # This feature will patch to the longest length (8)
+
+        
+        
+        if self._traj_judge: # Trajectory judgment task
+            negative_traj = negative_captions + negative_images + negative_random
+            for traj in negative_traj:
+                instructions += [instructions[0]]
+                f, b, p, m = self._get_visual_features(traj)
+                features += [f]
+                boxes += [b]
+                probs += [p]
+                masks += [m]
+
+        else:
+
+            # get the negative captions
+            for traj in negative_captions:
+                instructions += [instructions[0]]
+                f, b, p, m = self._get_visual_features(traj)
+                # features += [features[0]]
+                # boxes += [boxes[0]]
+                # probs += [probs[0]]
+                # masks += [masks[0]]
+                features += [f]
+                boxes += [b]
+                probs += [p]
+                masks += [m]
+                
+
+            if self.args.negative_style == 'shuffle_instruction':
+                # get the negative captions
+                for traj in negative_images:
+                    instructions += [self.generate_instruction(build_instruction,traj)]
+                    features += [features[0]]
+                    boxes += [boxes[0]]
+                    probs += [probs[0]]
+                    masks += [masks[0]]
+            else:
+                # get the negative images
+                for traj in negative_images:
+                    instructions += [instructions[0]]
+                    f, b, p, m = self._get_visual_features(traj)
+                    features += [f]
+                    boxes += [b]
+                    probs += [p]
+                    masks += [m]
+
+            # get the random images
+            for traj in negative_random:
+                instructions += [instructions[0]]
+                f, b, p, m = self._get_visual_features(traj)
+                features += [f]
+                boxes += [b]
+                probs += [p]
+                masks += [m]
+
+
+        # convert data into tensors
+        image_features = torch.from_numpy(np.array(features)).float()
+        image_boxes = torch.from_numpy(np.array(boxes)).float()
+        image_probs = torch.from_numpy(np.array(probs)).float()
+        image_masks = torch.from_numpy(np.array(masks)).long()
+        instr_tokens = torch.from_numpy(np.array(instructions)).long()
+        instr_mask = instr_tokens > 0
+        segment_ids = torch.zeros_like(instr_tokens)
+        instr_highlights = torch.zeros((image_features.shape[0], 0)).long()
+
+
+        # randomly mask image features
+        if self._masked_vision:
+            image_features, image_targets, image_targets_mask = randomize_regions(
+                image_features, image_probs, image_masks
+            )
+        else:
+            image_targets = torch.ones_like(image_probs) / image_probs.shape[-1]
+            image_targets_mask = torch.zeros_like(image_masks)
+
+        # randomly mask instruction tokens
+        if self._masked_language:
+            instr_tokens, instr_targets = randomize_tokens(
+                instr_tokens, instr_mask, self._tokenizer, self.args
+            )
+        else:
+            instr_targets = torch.ones_like(instr_tokens) * -1
+
+        # construct null return items
+        co_attention_mask = torch.zeros(
+            2, self.args.max_path_length * self.args.max_num_boxes, self.args.max_instruction_length
+        ).long()
+        
+        ordering_target = torch.tensor(ordering_target)
+        if self._training:
+            ranking_target = torch.tensor(0)
+        else:
+            ranking_target = torch.tensor(0)
+        
+        return (
+            ranking_target,
+            image_features,
+            image_boxes,
+            image_masks,
+            image_targets,
+            image_targets_mask,
+            instr_tokens,
+            instr_mask,
+            instr_targets,
+            instr_highlights,
+            segment_ids,
+            co_attention_mask,
+            torch.tensor(self.get_listing_ids(listing_id)).long(),
+            torch.ones(image_features.shape[0]).bool(),
+            ordering_target,
+            order_atteneded_visual_feature,
+        )
 
 class BeamDataset(Dataset):
     def __init__(
