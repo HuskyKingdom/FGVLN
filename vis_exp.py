@@ -551,18 +551,18 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
     # target = get_ranking_target(batch)
     # correct = torch.sum(torch.argmax(prediction, 1) == target).float()
     
-    # model.zero_grad()
+    model.zero_grad()
 
-    # reduced_metrics = {}
-    # reduced_metrics["loss"] = {}
-    # reduced_metrics["accuracy"] = {}
+    reduced_metrics = {}
+    reduced_metrics["loss"] = {}
+    reduced_metrics["accuracy"] = {}
 
-    # loss = torch.tensor(0, device=device).float()
-    # print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
-    # loss += compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
-    # loss.backward()
+    loss = torch.tensor(0, device=device).float()
+    print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
+    loss += compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
+    loss.backward()
 
-    # all_logits.append(prediction.detach().tolist())
+    all_logits.append(prediction.detach().tolist())
 
 
 
