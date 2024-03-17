@@ -541,7 +541,7 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
         )
     
 
-    # outputs = model(*get_model_input(batch))
+    outputs = model(*get_model_input(batch))
 
     # if step==25:
     #     break
