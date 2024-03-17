@@ -442,24 +442,24 @@ def get_path(args, task_prefix) ->str:
 local_rank = get_local_rank(args)
 
 # # construct model inputs
-# caption_path = f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_train{args.feather_note}.json"
-# tokenizer = BertTokenizer.from_pretrained(args.bert_tokenizer)
-# features_reader = load_features_reader(args)
-# separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
-# testset_path = get_testset_path(args)
+caption_path = f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_train{args.feather_note}.json"
+tokenizer = BertTokenizer.from_pretrained(args.bert_tokenizer)
+features_reader = load_features_reader(args)
+separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
+testset_path = get_testset_path(args)
 
 # # # test
-# Datset = VisDataset(
-#     args = args,
-#     caption_path=caption_path,
-#     tokenizer=tokenizer,
-#     features_reader=features_reader,
-#     masked_vision=False,
-#     masked_language=False,
-#     training=False,
-#     separators=separators,
-#     testset_path=testset_path,
-# )
+Datset = VisDataset(
+    args = args,
+    caption_path=caption_path,
+    tokenizer=tokenizer,
+    features_reader=features_reader,
+    masked_vision=False,
+    masked_language=False,
+    training=False,
+    separators=separators,
+    testset_path=testset_path,
+)
 
 
 # Datset = DownStreamDataset(
@@ -479,27 +479,27 @@ local_rank = get_local_rank(args)
 #     )
 
 
-# if local_rank == -1:
-#     train_sampler = RandomSampler(Datset)
-# else:
-#     train_sampler = DistributedSampler(Datset)
+if local_rank == -1:
+    train_sampler = RandomSampler(Datset)
+else:
+    train_sampler = DistributedSampler(Datset)
 
-# batch_size = args.batch_size // args.gradient_accumulation_steps
-# if local_rank != -1:
-#     batch_size = batch_size // dist.get_world_size()
+batch_size = args.batch_size // args.gradient_accumulation_steps
+if local_rank != -1:
+    batch_size = batch_size // dist.get_world_size()
 
-# print(local_rank)
+print(local_rank)
 
-# train_data_loader = DataLoader(
-#         Datset,
-#         sampler=train_sampler,
-#         batch_size=batch_size,
-#         num_workers=args.num_workers,
-#         pin_memory=True,
-#     )
+train_data_loader = DataLoader(
+        Datset,
+        sampler=train_sampler,
+        batch_size=batch_size,
+        num_workers=args.num_workers,
+        pin_memory=True,
+    )
 
-args.pretrain = False
-train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
+# args.pretrain = False
+# train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
 
 
 # load pre-trained model
@@ -541,28 +541,28 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
         )
     
 
-    outputs = model(*get_model_input(batch))
+    # outputs = model(*get_model_input(batch))
 
-    if step==25:
-        break
+    # if step==25:
+    #     break
 
-    opt_mask = get_mask_options(batch)
-    prediction = pad_packed(outputs["ranking"].squeeze(1), opt_mask)
-    target = get_ranking_target(batch)
-    correct = torch.sum(torch.argmax(prediction, 1) == target).float()
+    # opt_mask = get_mask_options(batch)
+    # prediction = pad_packed(outputs["ranking"].squeeze(1), opt_mask)
+    # target = get_ranking_target(batch)
+    # correct = torch.sum(torch.argmax(prediction, 1) == target).float()
     
-    model.zero_grad()
+    # model.zero_grad()
 
-    reduced_metrics = {}
-    reduced_metrics["loss"] = {}
-    reduced_metrics["accuracy"] = {}
+    # reduced_metrics = {}
+    # reduced_metrics["loss"] = {}
+    # reduced_metrics["accuracy"] = {}
 
-    loss = torch.tensor(0, device=device).float()
-    print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
-    loss += compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
-    loss.backward()
+    # loss = torch.tensor(0, device=device).float()
+    # print("Prediction: {} \n Target: {} \n Correct: {} \n\n".format(prediction,target,correct))
+    # loss += compute_metrics_independent(batch, outputs, 'ranking', args, logger, reduced_metrics)
+    # loss.backward()
 
-    all_logits.append(prediction.detach().tolist())
+    # all_logits.append(prediction.detach().tolist())
 
 
 
