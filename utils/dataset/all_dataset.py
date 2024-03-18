@@ -158,6 +158,22 @@ class BaseDataset(Dataset):
             order_labels
         ) = self._pick_photo_ids(listing_id)
 
+        temp_fg = positive_ids[:]
+        temp_fg[1] = negative_images[1][0]
+
+        temp_fg_1 = positive_ids[:]
+        temp_fg_1[2] = negative_images[1][0]
+
+        idx = 1
+        while temp_fg == positive_ids:
+            temp_fg[1] = negative_images[1][idx]
+            idx += 1
+        idx = 1
+        while temp_fg_1 == positive_ids:
+            temp_fg_1[2] = negative_images[1][idx]
+            idx += 1
+
+        self.fg_negatives = [temp_fg,temp_fg_1]
 
         # get the order label of trajectory
         ordering_target = []
@@ -231,6 +247,15 @@ class BaseDataset(Dataset):
 
             # get the random images
             for traj in negative_random:
+                instructions += [instructions[0]]
+                f, b, p, m = self._get_visual_features(traj)
+                features += [f]
+                boxes += [b]
+                probs += [p]
+                masks += [m]
+            
+            # get fg negatives
+            for traj in self.fg_negatives:
                 instructions += [instructions[0]]
                 f, b, p, m = self._get_visual_features(traj)
                 features += [f]
