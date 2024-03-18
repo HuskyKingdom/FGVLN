@@ -543,13 +543,13 @@ for step, batch in enumerate(tqdm(train_data_loader, disable= not (default_gpu))
 
     outputs = model(*get_model_input(batch))
 
-    # if step==25:
-    #     break
+    if step==25:
+        break
 
-    # opt_mask = get_mask_options(batch)
-    # prediction = pad_packed(outputs["ranking"].squeeze(1), opt_mask)
-    # target = get_ranking_target(batch)
-    # correct = torch.sum(torch.argmax(prediction, 1) == target).float()
+    opt_mask = get_mask_options(batch)
+    prediction = pad_packed(outputs["ranking"].squeeze(1), opt_mask)
+    target = get_ranking_target(batch)
+    correct = torch.sum(torch.argmax(prediction, 1) == target).float()
     
     model.zero_grad()
 
