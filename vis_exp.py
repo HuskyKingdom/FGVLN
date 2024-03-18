@@ -194,7 +194,11 @@ def get_model_input(batch):
         -1, co_attention_mask.size(2), co_attention_mask.size(3)
     )
 
+    variable_names = ["instr_tokens", "image_features", "image_locations", "segment_ids", "instr_mask", "image_mask", "co_attention_mask", "instr_highlights", "attend_order_visual_feature"]
+    variables = [instr_tokens, image_features, image_locations, segment_ids, instr_mask, image_mask, co_attention_mask, instr_highlights, attend_order_visual_feature]
 
+    for name, var in zip(variable_names, variables):
+        print(f"{name}: {var.shape}")
 
     return (
         instr_tokens,
