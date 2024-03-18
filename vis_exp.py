@@ -453,7 +453,7 @@ separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
 testset_path = get_testset_path(args)
 
 # # # test
-Datset = VisDataset(
+Datset = YTbDataset(
     args = args,
     caption_path=caption_path,
     tokenizer=tokenizer,
