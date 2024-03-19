@@ -71,7 +71,6 @@ class Lily(PreTrainedModel):
         # print("image_features {} | instr_tokens {} | attention_mask {} | image_attention_mask {} | co_attention_mask {} \n\n".
         #       format(image_features.shape,instr_tokens.shape,attention_mask.shape,image_attention_mask.shape,co_attention_mask.shape))
 
-        print(torch.all(co_attention_mask == 0))
   
         (
             sequence_output_t,
@@ -105,7 +104,7 @@ class Lily(PreTrainedModel):
         else:
             assert False
 
-        # pooled_output = self.dropout(pooled_output)
+        pooled_output = self.dropout(pooled_output)
 
   
 
