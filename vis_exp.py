@@ -410,6 +410,7 @@ set_seed(args)
 
 # get device settings
 default_gpu, _, device = set_cuda(args)
+device = "cuda:1"
 logger = NoneLogger()
 
 
