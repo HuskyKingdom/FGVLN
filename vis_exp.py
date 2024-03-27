@@ -412,8 +412,8 @@ set_seed(args)
 default_gpu, _, device = set_cuda(args)
 logger = NoneLogger()
 
-device = "cuda:1"
-default_gpu = "cuda:1"
+# device = "cuda:1"
+# default_gpu = "cuda:1"
 
 
 
