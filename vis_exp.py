@@ -526,7 +526,7 @@ else:
     )
 
 model.to(device)
-model = wrap_distributed_model(model, local_rank)
+# model = wrap_distributed_model(model, local_rank)
 
 optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
