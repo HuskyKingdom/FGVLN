@@ -584,6 +584,8 @@ class BertBiAttention(nn.Module):
         # Normalize the attention scores to probabilities.
         attention_probs1 = nn.Softmax(dim=-1)(attention_scores1)
 
+        print(f"attention probs1 shape {attention_probs1.shape}")
+
         # This is actually dropping out entire tokens to attend to, which might
         # seem a bit unusual, but is taken from the original Transformer paper.
         attention_probs1 = self.dropout1(attention_probs1)
