@@ -584,7 +584,7 @@ class BertBiAttention(nn.Module):
         # Normalize the attention scores to probabilities.
         attention_probs1 = nn.Softmax(dim=-1)(attention_scores1)
 
-        print(f"attention probs1 shape {attention_probs1.shape}")
+        
 
         # This is actually dropping out entire tokens to attend to, which might
         # seem a bit unusual, but is taken from the original Transformer paper.
@@ -611,6 +611,8 @@ class BertBiAttention(nn.Module):
         # This is actually dropping out entire tokens to attend to, which might
         # seem a bit unusual, but is taken from the original Transformer paper.
         attention_probs2 = self.dropout2(attention_probs2)
+
+        print(f"attention probs1 shape {attention_probs1.shape}, and prob2 {attention_probs2.shape}")
 
         context_layer2 = torch.matmul(attention_probs2, value_layer2)
         context_layer2 = context_layer2.permute(0, 2, 1, 3).contiguous()
