@@ -4,7 +4,7 @@ import torch
 import numpy as np
 import os
 
-def visualize_and_save_attention(attention_weights, save_dir="attention_maps"):
+def visualize_and_save_attention(attention_weights, save_dir="attention_maps_1"):
     """
     Visualizes and saves the attention maps.
     
