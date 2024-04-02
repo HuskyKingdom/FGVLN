@@ -3,6 +3,7 @@ Official Implementation of [xxx].
 
 Fine-grained crossmodality alignment between trajectory and instruction via Bayes filtering.
 
+[Upstream](https://github.com/JeremyLinky/YouTube-VLN)
 
 ## Install (Offline Data Only For Downstream Task)
 
