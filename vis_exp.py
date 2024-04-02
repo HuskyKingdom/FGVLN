@@ -446,25 +446,25 @@ def get_path(args, task_prefix) ->str:
 # create data loaders
 local_rank = get_local_rank(args)
 
-# # construct model inputs
-caption_path = f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_train{args.feather_note}.json"
-tokenizer = BertTokenizer.from_pretrained(args.bert_tokenizer)
-features_reader = load_features_reader(args)
-separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
-testset_path = get_testset_path(args)
+# # # construct model inputs
+# caption_path = f"data/YouTube-VLN/{args.pre_dataset}/{args.prefix}{args.pre_dataset}_train{args.feather_note}.json"
+# tokenizer = BertTokenizer.from_pretrained(args.bert_tokenizer)
+# features_reader = load_features_reader(args)
+# separators = ("then", "and", ",", ".") if args.separators else ("[SEP]",)
+# testset_path = get_testset_path(args)
 
-# # # test
-Datset = VisDataset(
-    args = args,
-    caption_path=caption_path,
-    tokenizer=tokenizer,
-    features_reader=features_reader,
-    masked_vision=False,
-    masked_language=False,
-    training=True,
-    separators=separators,
-    testset_path=testset_path,
-)
+# # # # test
+# Datset = VisDataset(
+#     args = args,
+#     caption_path=caption_path,
+#     tokenizer=tokenizer,
+#     features_reader=features_reader,
+#     masked_vision=False,
+#     masked_language=False,
+#     training=True,
+#     separators=separators,
+#     testset_path=testset_path,
+# )
 
 
 # Datset = DownStreamDataset(
@@ -484,27 +484,27 @@ Datset = VisDataset(
 #     )
 
 
-if local_rank == -1:
-    train_sampler = RandomSampler(Datset)
-else:
-    train_sampler = DistributedSampler(Datset)
+# if local_rank == -1:
+#     train_sampler = RandomSampler(Datset)
+# else:
+#     train_sampler = DistributedSampler(Datset)
 
-batch_size = args.batch_size // args.gradient_accumulation_steps
-if local_rank != -1:
-    batch_size = batch_size // dist.get_world_size()
+# batch_size = args.batch_size // args.gradient_accumulation_steps
+# if local_rank != -1:
+#     batch_size = batch_size // dist.get_world_size()
 
-print(local_rank)
+# print(local_rank)
 
-train_data_loader = DataLoader(
-        Datset,
-        sampler=train_sampler,
-        batch_size=batch_size,
-        num_workers=args.num_workers,
-        pin_memory=True,
-    )
+# train_data_loader = DataLoader(
+#         Datset,
+#         sampler=train_sampler,
+#         batch_size=batch_size,
+#         num_workers=args.num_workers,
+#         pin_memory=True,
+#     )
 
-# args.pretrain = False
-# train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
+args.pretrain = False
+train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
 
 
 # load pre-trained model

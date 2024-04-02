@@ -8,7 +8,7 @@ requests
 transformers
 networkx
 lmdb
-
+seaborn
 colorama
 termcolor
 pyfiglet
