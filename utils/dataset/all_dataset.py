@@ -977,8 +977,8 @@ class BeamDataset(Dataset):
                     order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
 
             # print(len(selected_paths))
-            # self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
-            # self.FGN_sampler.sample_fgn(self.args.num_FGN)
+            self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
+            self.FGN_sampler.sample_fgn(self.args.num_FGN)
             
         else:
             if self._traj_judge:

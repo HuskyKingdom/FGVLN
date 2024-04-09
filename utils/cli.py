@@ -107,7 +107,7 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-j",
         "--num_workers",
-        default=3,
+        default=0,
         type=int,
         help="Number of workers per gpu (default: 3)",
     )
