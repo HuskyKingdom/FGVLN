@@ -140,7 +140,6 @@ def get_loss_correct(batch: List[torch.Tensor], outputs: Dict[str, torch.Tensor]
         )
     elif task == 'ranking':
         target = get_ranking_target(batch)
-        print(opt_mask.shape)
         prediction = pad_packed(outputs[f"{task}"].squeeze(1), opt_mask)
         if training:
             loss = F.cross_entropy(prediction, target, ignore_index=-1)
