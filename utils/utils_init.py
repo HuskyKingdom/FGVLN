@@ -52,7 +52,7 @@ def get_model_input(batch):
     ) = batch
 
 
-
+    print("input shape in train  {}".format(image_features.shape))
     # remove padding samples
     image_features = image_features[opt_mask]
     image_locations = image_locations[opt_mask]
@@ -67,7 +67,7 @@ def get_model_input(batch):
     )
 
     
-
+    print("input shape in train  {}".format(image_features.shape))
 
     return (
         instr_tokens,
@@ -214,7 +214,7 @@ def train_epoch(
             for t in batch
         )
 
-        print("input shape in train  {}".format(batch[1].shape))
+        
 
         # get the model output
         outputs = model(*get_model_input(batch))
