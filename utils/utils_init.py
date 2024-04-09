@@ -206,11 +206,15 @@ def train_epoch(
     for step, batch in enumerate(tqdm(data_loader, disable= not (default_gpu))):
 
         model.train()   # CHANGE
+
+        
         # load batch on gpu
         batch = tuple(
             t.cuda(device=device, non_blocking=True) if hasattr(t, "cuda") else t
             for t in batch
         )
+
+        print("input shape in train  {}".format(batch[1].shape))
 
         # get the model output
         outputs = model(*get_model_input(batch))
