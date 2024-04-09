@@ -51,8 +51,6 @@ def get_model_input(batch):
         attend_order_visual_feature,
     ) = batch
 
-
-
     # remove padding samples
     image_features = image_features[opt_mask]
     image_locations = image_locations[opt_mask]
@@ -65,9 +63,6 @@ def get_model_input(batch):
     co_attention_mask = co_attention_mask.view(
         -1, co_attention_mask.size(2), co_attention_mask.size(3)
     )
-
-    
-    
 
     return (
         instr_tokens,
@@ -144,13 +139,11 @@ def get_loss_correct(batch: List[torch.Tensor], outputs: Dict[str, torch.Tensor]
         if training:
             loss = F.cross_entropy(prediction, target, ignore_index=-1)
             correct = torch.sum(torch.argmax(prediction, 1) == target).float()
-            print("Target: {} \n Prediction: {} \n Correct {} \n\n".format(target,prediction,correct))
         else:
             loss = F.binary_cross_entropy_with_logits(prediction, target.float())
             correct = torch.sum(
                 target.gather(1, torch.argmax(prediction, 1).view(-1, 1))
             ).float()
-            
     elif task == 'traj':
         prediction = pad_packed(outputs[f"{task}"].squeeze(1), opt_mask)
         if not (args.ranking or args.not_traj_judge_data):
@@ -200,14 +193,10 @@ def train_epoch(
     epoch, model, optimizer, scheduler, data_loader, writer, default_gpu, args, logger
 ) -> None:
     device = next(model.parameters()).device
-    model.train()
+    model.train()   # CHANGE
     model.zero_grad()
 
     for step, batch in enumerate(tqdm(data_loader, disable= not (default_gpu))):
-
-           # CHANGE
-
-        
         # load batch on gpu
         batch = tuple(
             t.cuda(device=device, non_blocking=True) if hasattr(t, "cuda") else t
@@ -216,8 +205,6 @@ def train_epoch(
 
         # get the model output
         outputs = model(*get_model_input(batch))
-
-        
     
         # calculate the final loss
         loss = torch.tensor(0, device=device).float()
@@ -457,7 +444,6 @@ def val_epoch(epoch: int, model, tag, data_loader, writer, default_gpu, args, gl
         f"[{task}] epoch: {epoch} success_rate: {success_rate.item():.3f}"
     )
     return success_rate
-
 
 
 
