@@ -126,6 +126,7 @@ class Lily(PreTrainedModel):
         if self.args.traj_judge:
             outputs["traj"] = self.judge(pooled_output)
 
+        print(f"output shape in lily model {outputs["traj"]}")
         if self.args.masked_vision:
             outputs["vision"] = vision_prediction   # [bs*(1+ self.args.num_negatives*3), max_path_length*max_path_length*max_num_boxes, image_probs.shape[2]] ([14, 808, 1601])
                 
