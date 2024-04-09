@@ -21,6 +21,20 @@ def get_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
+        "--trial_type",
+        default=0,
+        type=int,
+        help="0-random 1-BO",
+    )
+
+    parser.add_argument(
+        "--trial_iter",
+        default=3,
+        type=int,
+        help="number of iterations in BO",
+    )
+
+    parser.add_argument(
         "--pre_dataset",
         type=str,
         choices=["","ytb", "bnb"],

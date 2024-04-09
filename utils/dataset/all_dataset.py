@@ -46,6 +46,7 @@ from utils.dataset.common import (
     ConcatenateInstructionGenerator,  
     YTBRephraseInstructionGenerator,
 )
+from utils.FGN_sample import FGN_sampler
 
 PhotoId = Union[int, Tuple[int, ...]]
 Sample = Tuple[str, PhotoId]  # listing id, photo id
@@ -808,6 +809,7 @@ class BeamDataset(Dataset):
 
         self._traj_judge = args.traj_judge and not (args.ranking or args.not_traj_judge_data)
 
+
         # load and tokenize data (with caching)
         tokenized_path = f"_tokenized_{self.args.max_instruction_length}".join(
             os.path.splitext(vln_path)
@@ -952,7 +954,7 @@ class BeamDataset(Dataset):
                         selected_paths.append(beam_paths[idx])
             
             
-            
+            self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter)
 
             # shuffle the visual features from the ground truth as a free negative path
             path = self._vln_data[vln_index]["path"]
@@ -969,7 +971,7 @@ class BeamDataset(Dataset):
                 if not self._traj_judge:
                     order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
 
-            print(len(selected_paths))
+            
             
         else:
             if self._traj_judge:
