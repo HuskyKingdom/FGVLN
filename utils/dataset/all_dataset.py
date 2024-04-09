@@ -48,6 +48,7 @@ from utils.dataset.common import (
 )
 from utils.FGN_sample import FGN_sampler
 
+
 PhotoId = Union[int, Tuple[int, ...]]
 Sample = Tuple[str, PhotoId]  # listing id, photo id
 Trajectory = List[Sample]
@@ -794,6 +795,7 @@ class BeamDataset(Dataset):
         ground_truth_trajectory: bool,
         shuffle_visual_features: bool,
         shuffler: str = "different",
+        model = None,
         **kwargs,
     ):
         # set common parameters
@@ -809,6 +811,7 @@ class BeamDataset(Dataset):
 
         self._traj_judge = args.traj_judge and not (args.ranking or args.not_traj_judge_data)
 
+        self.model = model
 
         # load and tokenize data (with caching)
         tokenized_path = f"_tokenized_{self.args.max_instruction_length}".join(
@@ -954,11 +957,13 @@ class BeamDataset(Dataset):
                         selected_paths.append(beam_paths[idx])
             
             
-            self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter)
+            
 
             # shuffle the visual features from the ground truth as a free negative path
             path = self._vln_data[vln_index]["path"]
             path_range = range(len(path))
+
+            
 
             if self._shuffle_visual_features:
 
@@ -971,7 +976,8 @@ class BeamDataset(Dataset):
                 if not self._traj_judge:
                     order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
 
-            
+            self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
+            self.FGN_sampler.sample_fgn(self.args.num_FGN)
             
         else:
             if self._traj_judge:
@@ -1106,6 +1112,8 @@ class BeamDataset(Dataset):
                 boxes.append(np.vstack(i[1]))
                 probs.append(np.vstack(i[2]))
                 masks.append(np.hstack(i[3]))
+            
+
         else:
             for path in selected_paths:
                 f, b, p, m = self._get_path_features(scan_id, path, heading)
@@ -1114,6 +1122,7 @@ class BeamDataset(Dataset):
                 probs.append(np.vstack(p))
                 masks.append(np.hstack(m))
 
+            
 
         # get the order label of trajectory
         ordering_target = []
@@ -1177,6 +1186,8 @@ class BeamDataset(Dataset):
 
         target = torch.tensor(target).long()
         ordering_target = torch.tensor(ordering_target)
+        
+
         
 
         return (

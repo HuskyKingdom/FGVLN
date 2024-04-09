@@ -63,7 +63,7 @@ def load_pretrian_dataset(args, tokenizer, features_reader, caption_path, testse
     )
 
 
-def load_BeamDataset(tag, args, tokenizer, features_reader, default_gpu, Train = True):
+def load_BeamDataset(tag, args, tokenizer, features_reader, default_gpu, model, Train = True):
     
     if Train:
         num_beams=args.num_beams_train
@@ -90,10 +90,11 @@ def load_BeamDataset(tag, args, tokenizer, features_reader, default_gpu, Train =
         default_gpu=default_gpu,
         ground_truth_trajectory=False,
         shuffle_visual_features=shuffle_visual_features,
+        model = model
     )
 
 
-def load_dataloader(args, default_gpu, logger, local_rank) -> str:
+def load_dataloader(args, default_gpu, logger, local_rank, model) -> str:
     tokenizer = BertTokenizer.from_pretrained(args.bert_tokenizer)
 
     logger.info(f"Loading features reader...")
@@ -147,7 +148,7 @@ def load_dataloader(args, default_gpu, logger, local_rank) -> str:
         logger.info(f"Beam path: {beam_path}")
         
         # loading training datasets
-        train_dataset = load_BeamDataset("train", args, tokenizer, features_reader, default_gpu)
+        train_dataset = load_BeamDataset("train", args, tokenizer, features_reader, default_gpu, model)
         test_dataset = None
 
     if args.debug:
@@ -160,8 +161,8 @@ def load_dataloader(args, default_gpu, logger, local_rank) -> str:
     logger.info("Loading val datasets")
     
     if not args.no_test and not args.pretrain:
-        val_seen_dataset = load_BeamDataset("val_seen", args, tokenizer, features_reader, default_gpu, Train=True)
-        val_unseen_dataset = load_BeamDataset("val_unseen", args, tokenizer, features_reader, default_gpu, Train=True) # CHANGE~
+        val_seen_dataset = load_BeamDataset("val_seen", args, tokenizer, features_reader, default_gpu, model, Train=True)
+        val_unseen_dataset = load_BeamDataset("val_unseen", args, tokenizer, features_reader, default_gpu, model, Train=True) # CHANGE~
     
         if args.pretrain:
             # only run on a subset of the datasets

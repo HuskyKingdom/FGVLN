@@ -107,7 +107,7 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-j",
         "--num_workers",
-        default=3,
+        default=0,
         type=int,
         help="Number of workers per gpu (default: 3)",
     )
@@ -500,6 +500,13 @@ def get_parser() -> argparse.ArgumentParser:
         default=3,
         type=int,
         help="number of iterations in BO",
+    )
+
+    parser.add_argument(
+        "--num_FGN",
+        default=1,
+        type=int,
+        help="number of FG negatives",
     )
 
     return parser

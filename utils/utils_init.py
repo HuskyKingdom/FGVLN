@@ -66,6 +66,7 @@ def get_model_input(batch):
         -1, co_attention_mask.size(2), co_attention_mask.size(3)
     )
 
+    
 
 
     return (
@@ -199,10 +200,12 @@ def train_epoch(
     epoch, model, optimizer, scheduler, data_loader, writer, default_gpu, args, logger
 ) -> None:
     device = next(model.parameters()).device
-    model.train()   # CHANGE
+    
     model.zero_grad()
 
     for step, batch in enumerate(tqdm(data_loader, disable= not (default_gpu))):
+
+        model.train()   # CHANGE
         # load batch on gpu
         batch = tuple(
             t.cuda(device=device, non_blocking=True) if hasattr(t, "cuda") else t

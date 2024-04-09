@@ -68,9 +68,6 @@ class Lily(PreTrainedModel):
         order_atteneded_visual_feature=None,
     ) -> Dict[str, torch.Tensor]:
         
-        print("image_features {} | instr_tokens {} | attention_mask {} | image_attention_mask {} | co_attention_mask {} \n\n".
-              format(image_features.shape,instr_tokens.shape,attention_mask.shape,image_attention_mask.shape,co_attention_mask.shape))
-
   
         (
             sequence_output_t,

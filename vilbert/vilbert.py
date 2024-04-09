@@ -613,9 +613,9 @@ class BertBiAttention(nn.Module):
         # seem a bit unusual, but is taken from the original Transformer paper.
         attention_probs2 = self.dropout2(attention_probs2)
 
-        visualize_and_save_attention(attention_probs1)
-        print(f"attention probs1 shape {attention_probs1.shape}, and prob2 {attention_probs2.shape}")
-        assert 1==2
+        # visualize_and_save_attention(attention_probs1)
+        # print(f"attention probs1 shape {attention_probs1.shape}, and prob2 {attention_probs2.shape}")
+        # assert 1==2
         context_layer2 = torch.matmul(attention_probs2, value_layer2)
         context_layer2 = context_layer2.permute(0, 2, 1, 3).contiguous()
         new_context_layer_shape2 = context_layer2.size()[:-2] + (self.all_head_size,)

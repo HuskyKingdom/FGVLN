@@ -47,7 +47,7 @@ def main():
 
     # create data loaders
     local_rank = get_local_rank(args)
-    train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank)
+    
     
     # Loading model
     logger.info(f"Loading model")
@@ -81,6 +81,8 @@ def main():
     if default_gpu:
         with open(save_folder / "model.txt", "w") as fid:
             fid.write(str(model))
+
+    train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank,model)
 
     optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
