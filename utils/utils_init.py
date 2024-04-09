@@ -214,13 +214,10 @@ def train_epoch(
             for t in batch
         )
 
-        x = get_model_input(batch)
-        print("input shape in train  {}".format(x[1].shape))
-
         # get the model output
         outputs = model(*get_model_input(batch))
 
-        print("input shape in train  {}".format(outputs["ranking"].shape))
+        
     
         # calculate the final loss
         loss = torch.tensor(0, device=device).float()

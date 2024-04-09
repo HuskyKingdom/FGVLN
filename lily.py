@@ -68,6 +68,7 @@ class Lily(PreTrainedModel):
         order_atteneded_visual_feature=None,
     ) -> Dict[str, torch.Tensor]:
         
+        print("input shape in train  {}".format(image_features.shape))
   
         (
             sequence_output_t,
