@@ -47,7 +47,6 @@ def main():
 
     # create data loaders
     local_rank = get_local_rank(args)
-    train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank,model=None)
     
     
     
@@ -74,7 +73,7 @@ def main():
             args.from_pretrained, config, default_gpu=default_gpu
         )
 
-    
+    train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank,model=None)
 
     logger.info(f"number of parameters: {sum(p.numel() for p in model.parameters())}")
 
