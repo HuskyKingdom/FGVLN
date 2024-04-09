@@ -488,4 +488,18 @@ def get_parser() -> argparse.ArgumentParser:
         help=""
     )
 
+    parser.add_argument(
+        "--trial_type",
+        default=1,
+        type=int,
+        help="0-random 1-BO",
+    )
+
+    parser.add_argument(
+        "--trial_iter",
+        default=3,
+        type=int,
+        help="number of iterations in BO",
+    )
+
     return parser
