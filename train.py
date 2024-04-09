@@ -76,7 +76,7 @@ def main():
 
     # move/distribute model to device
     model.to(device)
-    model = wrap_distributed_model(model, local_rank)
+    # model = wrap_distributed_model(model, local_rank)
 
     if default_gpu:
         with open(save_folder / "model.txt", "w") as fid:
