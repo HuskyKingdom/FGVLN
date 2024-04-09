@@ -103,7 +103,8 @@ class Lily(PreTrainedModel):
 
         pooled_output = self.dropout(pooled_output)
 
-  
+    
+        print("input shape in lily  {}".format(image_features.shape))
 
         outputs = {}
 
