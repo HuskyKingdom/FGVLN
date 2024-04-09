@@ -49,6 +49,7 @@ def main():
     local_rank = get_local_rank(args)
     
     
+    
     # Loading model
     logger.info(f"Loading model")
     config = BERT_CONFIG_FACTORY[args.model_name].from_json_file(args.config_file)
@@ -72,17 +73,19 @@ def main():
             args.from_pretrained, config, default_gpu=default_gpu
         )
 
+    train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank,model)
+
     logger.info(f"number of parameters: {sum(p.numel() for p in model.parameters())}")
 
     # move/distribute model to device
     model.to(device)
-    # model = wrap_distributed_model(model, local_rank)
+    model = wrap_distributed_model(model, local_rank)
 
     if default_gpu:
         with open(save_folder / "model.txt", "w") as fid:
             fid.write(str(model))
 
-    train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank,model)
+    
 
     optimizer, scheduler, model, start_epoch = get_optimization(args, model, len(train_data_loader), logger)
 
