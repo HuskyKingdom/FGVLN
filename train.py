@@ -73,13 +73,15 @@ def main():
             args.from_pretrained, config, default_gpu=default_gpu
         )
 
-    train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank,model=None)
+    
 
     logger.info(f"number of parameters: {sum(p.numel() for p in model.parameters())}")
 
     # move/distribute model to device
     model.to(device)
     model = wrap_distributed_model(model, local_rank)
+
+    train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank,model)
 
     if default_gpu:
         with open(save_folder / "model.txt", "w") as fid:
