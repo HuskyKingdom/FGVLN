@@ -232,7 +232,7 @@ class Objective(object):
 
             for timestep in range(len(M)):
                 print(f"ts {timestep} | elem {elem}")
-                FGN[timestep] = replace_feature[timestep] if M[timestep] == 1 else self.positive_path[elem][timestep]
+                FGN[timestep] = replace_feature[elem] if M[timestep] == 1 else self.positive_path[elem][timestep]
             
             # append to positives
             if elem == 0:
