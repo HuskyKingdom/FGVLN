@@ -61,7 +61,6 @@ def get_model_input(batch,device):
     )
 
     
-
     return (
         instr_tokens,
         image_features,
