@@ -231,6 +231,7 @@ class Objective(object):
             FGN = [None] * len(positive_path_feature[elem])
 
             for timestep in range(len(M)):
+                print(f"ts {timestep} | elem {elem}")
                 FGN[timestep] = replace_feature[timestep] if M[i] == 1 else self.positive_path[elem][timestep]
             
             # append to positives
