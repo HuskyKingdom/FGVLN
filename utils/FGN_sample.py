@@ -307,9 +307,17 @@ class FGN_sampler:
 
             # random sample num times
             for i in range(num):
-                temp_m = []
+
+                temp_m = [0] * self.max_trj_len 
+
+                # make sure to alter at least 1 frame
+                rand_index = random.randint(0, self.max_trj_len-1)
+                temp_m[rand_index] = 1
+
                 for index in range(self.max_trj_len):
-                    temp_m.append(random.randint(0,1))
+                    if index != rand_index:
+                        temp_m[index] = random.randint(0, 1)
+
                 M.append(temp_m)
 
         else:
