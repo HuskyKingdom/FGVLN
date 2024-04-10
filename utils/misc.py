@@ -114,8 +114,8 @@ def exp_saver(save_folder, run_type, stage):
 
 
 def logo_print():
-    cprint(figlet_format('YouTube VLN', font='slant'),
-        'blue')
+    cprint(figlet_format('BOVLN', font='slant'),
+        'red')
 
 class NoneLogger():
   def info(self, msg, *args, **kwargs):

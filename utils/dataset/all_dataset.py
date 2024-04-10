@@ -982,6 +982,8 @@ class BeamDataset(Dataset):
                     
             temp = selected_paths[0].copy()
             temp[1] = selected_paths[1][-1]
+            temp[0] = selected_paths[1][-1]
+            temp[3] = selected_paths[1][-1]
 
             selected_paths.append(temp)
             
