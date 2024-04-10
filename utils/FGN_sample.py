@@ -267,7 +267,7 @@ class Objective(object):
         loss = F.cross_entropy(prediction, target, ignore_index=-1)
         
 
-        return loss
+        return -loss
 
 
 class FGN_sampler:
@@ -309,7 +309,7 @@ class FGN_sampler:
         else:
 
             # BO
-            study = optuna.create_study()
+            study = optuna.create_study(direction='maximize')
             study.optimize(Objective(self.paths,self.replace, self.model, self.datasetIns,self.beam_index,self.vln_index,self.target,self.device), n_trials=self.iteration)
             print(f"BEST PARAMETER ---------- {study.best_params}")
             pass
