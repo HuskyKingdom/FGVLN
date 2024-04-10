@@ -231,7 +231,7 @@ class Objective(object):
             FGN = [None] * len(positive_path_feature[elem])
 
             for timestep in range(len(M)):
-                print(f"replace {torch.from_numpy(np.array(replace_feature)).float().shape} | positive {torch.from_numpy(np.array(self.positive_path)).float().shape}")
+                print(f"replace {torch.from_numpy(np.array(replace_feature[0])).float().shape} | positive {torch.from_numpy(np.array(self.positive_path[0])).float().shape}")
                 FGN[timestep] = replace_feature[elem] if M[timestep] == 1 else self.positive_path[elem][timestep]
             
             # append to positives
