@@ -89,7 +89,6 @@ class Objective(object):
         self.target = target
         self.device = device
 
-    
     def get_selected_feature(self,selected_paths):
 
         vln_index = self.datasetIns._beam_to_vln[self.beam_index]
@@ -117,6 +116,14 @@ class Objective(object):
             boxes.append(np.vstack(b))
             probs.append(np.vstack(p))
             masks.append(np.hstack(m))
+        
+        return features, boxes, probs, masks, path_id, instruction_index
+
+
+
+    
+    def wrap_features(self,features, boxes, probs, masks, path_id, instruction_index):
+
 
         _ = None # ignored returns
 
@@ -165,8 +172,6 @@ class Objective(object):
         instr_highlights = instr_highlights.repeat(len(features), 1).long()
 
 
-        
-
         return (
             target, # ranking target
             image_features, # vit image features
@@ -197,7 +202,18 @@ class Objective(object):
             m = trial.suggest_int(f"m_{i}",0,1)
             M.append(m)
         
-        # generate FGN
+
+
+
+        # generate FGN_____________
+        
+        # get beam paths features
+        beampaths = self.paths
+        features, boxes, probs, masks, path_id, instruction_index = self.get_selected_feature(beampaths)
+
+        print(f" feature {torch.from_numpy(np.array(features)).float()} | box {torch.from_numpy(np.array(boxes)).float()} | prob {torch.from_numpy(np.array(probs)).float()} | mask {torch.from_numpy(np.array(masks)).float()}")
+            
+        
         FGN = [None] * len(self.positive_path)
         for i in range(len(M)):
             FGN[i] = self.replace if M[i] == 1 else self.positive_path[i]
