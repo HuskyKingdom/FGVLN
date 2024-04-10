@@ -889,9 +889,9 @@ class BeamDataset(Dataset):
 
                 
                 for timestep in range(len(M[mask])):
-                    print(f"rlc {torch.from_numpy(np.array(replace_feature[elem])).float().shape} | pos {torch.from_numpy(np.array(positive_path_feature[elem][timestep])).float().shape}")
                     FGN[timestep] = replace_feature[elem] if M[mask][timestep] == 1 else positive_path_feature[elem][timestep]
                 
+                print(f"FGN {torch.from_numpy(np.array(FGN)).float().shape}")
                 # append to positives
                 if elem == 0:
                     features.append(np.vstack(FGN))
