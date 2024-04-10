@@ -1,31 +1,94 @@
 # NIPS24_TIA
 Official Implementation of [xxx].
 
-python pretrain.py     --pre_dataset ytb     --from_pretrained data/trained/pretrain_LILY.bin     --save_name ytbvln_2e5_500_MRT     --prefix merge+     --separators     --masked_vision     --masked_language     --ranking     --traj_judge     --batch_size 8     --learning_rate 2e-5     --num_epochs 500     --save_epochs 100
 
+## Training with Masking loss
 
-python vis_exp.py --pre_dataset ytb     --from_pretrained data/trained/pretrain_LILY.bin     --save_name ytbvln_2e5_500_MRT     --prefix merge+     --separators     --masked_vision     --masked_language     --ranking     --traj_judge     --batch_size 8     --learning_rate 2e-5     --num_epochs 500     --save_epochs 100
-
-
-python train.py --from_pretrained --from_pretrained data/trained/trained_best_unseen.bin --save_name ytbvln_2e5_500_MRT_ranking_30M_30RS --shuffle_visual_features --ranking --batch_size 16 --num_epochs 30
-
-
-
-
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch \
-    --nproc_per_node 4 \
-    --master_port 1234 \
-    -m pretrain \
-    --pre_dataset ytb \
-    --from_pretrained data/YouTube-VLN/pretrained_model.bin \
-    --save_name ytbvln_2e5_500_MRT \
-    --prefix merge+ \
-    --separators \
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
+    --nproc_per_node 4   \
+    --master_port 5558   \
+    -m train   \
+    --from_pretrained data/trained/pretrain_lily_new.bin \
+    --save_name FGvln_1phase  \
     --masked_vision \
     --masked_language \
-    --ranking \
-    --traj_judge \
-    --batch_size 8 \
-    --learning_rate 2e-5 \
-    --num_epochs 500 \
-    --save_epochs 100
+    --batch_size 12    \
+    --num_epochs 30 
+```
+
+## Training with Path Ranking loss
+
+Random Sample FGN:
+
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
+    --nproc_per_node 8   \
+    --master_port 5558   \
+    -m train   \
+    --from_pretrained data/trained/pretrain_lily_new.bin \
+    --save_name FGvln_2e5_Rnd_1FG_2phase  \
+    --shuffle_visual_features   \
+    --ranking   \
+    --batch_size 16    \
+    --num_epochs 30 \
+    --trial_type 0 \
+    --num_FGN 1
+```
+
+BO-based Sample FGN:
+
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
+    --nproc_per_node 8   \
+    --master_port 5558   \
+    -m train   \
+    --from_pretrained data/trained/pretrain_lily_new.bin \
+    --save_name FGvln_2e5_BO_1FG_2phase  \
+    --shuffle_visual_features   \
+    --ranking   \
+    --batch_size 16    \
+    --num_epochs 30 \
+    --trial_type 0 \
+    --num_FGN 1
+```
+
+## Training with Path Ranking loss and Aug Data
+
+Random Sample FGN:
+
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
+    --nproc_per_node 8   \
+    --master_port 5558   \
+    -m train   \
+    --from_pretrained data/trained/pretrain_lily_new.bin \
+    --save_name FGvln_2e5_Rnd_1FG_2phase  \
+    --prefix aug+ \
+    --beam_prefix aug_ \
+    --shuffle_visual_features   \
+    --ranking   \
+    --batch_size 16    \
+    --num_epochs 30 \
+    --trial_type 0 \
+    --num_FGN 1
+```
+
+BO-based Sample FGN:
+
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
+    --nproc_per_node 8   \
+    --master_port 5558   \
+    -m train   \
+    --from_pretrained data/trained/pretrain_lily_new.bin \
+    --save_name FGvln_2e5_BO_1FG_2phase  \
+    --prefix aug+ \
+    --beam_prefix aug_ \
+    --shuffle_visual_features   \
+    --ranking   \
+    --batch_size 16    \
+    --num_epochs 30 \
+    --trial_type 0 \
+    --num_FGN 1
+```

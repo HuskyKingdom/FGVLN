@@ -114,7 +114,7 @@ def exp_saver(save_folder, run_type, stage):
 
 
 def logo_print():
-    cprint(figlet_format('BOVLN', font='slant'),
+    cprint(figlet_format('FGvln', font='slant'),
         'red')
 
 class NoneLogger():
