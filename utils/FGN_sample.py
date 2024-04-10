@@ -221,7 +221,9 @@ class Objective(object):
         beampaths = self.paths
         features, boxes, probs, masks, path_id, instruction_index,positive_path_feature,replace_feature  = self.get_selected_feature(beampaths)
 
-        # unpack positive path features
+        print(f"features shape {torch.from_numpy(np.array(positive_path_feature[0])).float().shape} | replace shape {torch.from_numpy(np.array(replace_feature[0])).float().shape}")
+
+        # unpack positive path features & replace to produce FGN
         for elem in range(len(positive_path_feature)):
 
             FGN = [None] * len(self.positive_path)
@@ -239,7 +241,7 @@ class Objective(object):
             elif elem == 3:
                 masks.append(np.vstack(FGN))
 
-        print(f"features shape {torch.from_numpy(np.array(features)).float().shape}")
+        
         
 
 
