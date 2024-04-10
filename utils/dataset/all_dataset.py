@@ -888,7 +888,7 @@ class BeamDataset(Dataset):
                 FGN = [None] * len(positive_path_feature[elem])
 
                 for timestep in range(len(M[mask])):
-                    FGN[timestep] = replace_feature[elem] if M[mask][timestep] == 1 else positive_path_feature[elem][timestep]
+                    FGN[timestep] = replace_feature[elem].copy() if M[mask][timestep] == 1 else positive_path_feature[elem][timestep].copy()
                 
                 # append to positives
                 if elem == 0:
