@@ -1044,8 +1044,10 @@ class BeamDataset(Dataset):
 
             order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
         
-
-        count = 0 # for FG sampling
+        # for FG sampling
+        count = 0 
+        positive_path_feature = None
+        replace_feature = None
         
         # get path features
         features, boxes, probs, masks = [], [], [], []
@@ -1142,6 +1144,7 @@ class BeamDataset(Dataset):
             
 
         else:
+            
 
             for path in selected_paths:
                 f, b, p, m = self._get_path_features(scan_id, path, heading)
