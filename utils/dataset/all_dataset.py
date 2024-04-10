@@ -1274,7 +1274,7 @@ class BeamDataset(Dataset):
             path_probs.append(pad_probs)
             path_masks.append(pad_masks)
 
-        print(f"single path feature {len(path_features)} | feature {path_features}")
+        print(f"single path feature {torch.from_numpy(np.array(path_features)).float().shape} ")
 
         return (
             path_features,
