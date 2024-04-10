@@ -878,6 +878,29 @@ class BeamDataset(Dataset):
 
     def __len__(self):
         return len(self._beam_data)
+    
+    def add_FGNs(self,features, boxes, probs, masks, positive_path_feature,replace_feature, M):
+        
+        for mask in M:
+
+            for elem in range(len(positive_path_feature)):
+
+                FGN = [None] * len(positive_path_feature[elem])
+
+                for timestep in range(len(M[mask])):
+                    FGN[timestep] = replace_feature[elem] if M[mask][timestep] == 1 else positive_path_feature[elem][timestep]
+                
+                # append to positives
+                if elem == 0:
+                    features.append(np.vstack(FGN))
+                elif elem == 1:
+                    boxes.append(np.vstack(FGN))
+                elif elem == 2:
+                    probs.append(np.vstack(FGN))
+                elif elem == 3:
+                    masks.append(np.hstack(FGN))
+
+        return features, boxes, probs, masks
 
     def __getitem__(self, beam_index: int):
         vln_index = self._beam_to_vln[beam_index]
@@ -977,15 +1000,9 @@ class BeamDataset(Dataset):
                     order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
 
             
-            # self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
-            # self.FGN_sampler.sample_fgn(self.args.num_FGN)
+            self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
+            mask_indicators = self.FGN_sampler.sample_fgn(self.args.num_FGN)
                     
-            temp = selected_paths[0].copy()
-            temp[1] = selected_paths[1][-1]
-            temp[0] = selected_paths[1][-1]
-            temp[3] = selected_paths[1][-1]
-
-            selected_paths.append(temp)
             
         else:
             if self._traj_judge:
@@ -1027,6 +1044,7 @@ class BeamDataset(Dataset):
             order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
         
 
+        count = 0 # for FG sampling
         
         # get path features
         features, boxes, probs, masks = [], [], [], []
@@ -1123,14 +1141,20 @@ class BeamDataset(Dataset):
             
 
         else:
+
             for path in selected_paths:
                 f, b, p, m = self._get_path_features(scan_id, path, heading)
                 features.append(np.vstack(f))
                 boxes.append(np.vstack(b))
                 probs.append(np.vstack(p))
                 masks.append(np.hstack(m))
+                positive_path_feature = (f,b,p,m) if count == 0 else positive_path_feature
+                replace_feature = (f[-1],b[-1],p[-1],m[-1]) if count == 1 else replace_feature
+                count += 1
 
-            
+        
+        # add FGNs
+        features, boxes, probs, masks = self.add_FGNs(features, boxes, probs, masks, positive_path_feature,replace_feature, mask_indicators)
 
         # get the order label of trajectory
         ordering_target = []

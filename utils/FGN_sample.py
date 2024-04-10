@@ -4,6 +4,7 @@ import torch
 import numpy as np
 from utils.dataset.common import randomize_regions,randomize_tokens,pad_packed
 import torch.nn.functional as F
+import heapq
 
 def get_model_input(batch,device):
     (
@@ -230,7 +231,6 @@ class Objective(object):
             M.append(m)
         
 
-        
 
         # unpack positive path features & replace to produce FGN
         for elem in range(len(positive_path_feature)):
@@ -286,34 +286,49 @@ class FGN_sampler:
         self.vln_index = vln_index
         self.target = target
 
-        self.max_trj_len = 10
+        self.max_trj_len = len(paths[0])
         self.iteration = iteration
         self.device = next(self.model.parameters()).device
         
     
+    def find_n_best(all_,n): # return index of n best result
+
+        values = []
+        for trail in range(len(all_)):
+            values.append(trail.trail[0])
+        
+        return heapq.nlargest(n, range(len(values)), key=values.__getitem__)
 
 
     def sample_fgn(self,num):
 
-        FGNs = []
+        M = []
 
         if self.type == 0:
 
             # random sample num times
             for i in range(num):
-                current_FGN = self.positive[:]
-                x_k = random.randint(0,self.max_trj_len)
-                current_FGN[x_k] = self.replace
-                FGNs.append(current_FGN)
+                temp_m = []
+                for index in range(self.max_trj_len):
+                    temp_m.append(random.randint(0,1))
+                M.append(temp_m)
 
         else:
 
             # BO
             study = optuna.create_study(direction='maximize')
             study.optimize(Objective(self.paths,self.replace, self.model, self.datasetIns,self.beam_index,self.vln_index,self.target,self.device), n_trials=self.iteration)
-            print(f"BEST PARAMETER ---------- {study.best_params}")
-            pass
+            
+            all_trials = study.trials
+            best_idx = self.find_n_best(all_trials,num)
+
+            # formating M and return
+            for i in range(len(best_idx)):
+                temp_m = []
+                for index in range(self.max_trj_len):
+                    temp_m.append(all_trials[i]["params"][f"m_{index}"])
+                
+                M.append(temp_m)
 
            
-
-        return FGNs
+        return M
