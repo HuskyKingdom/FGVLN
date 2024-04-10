@@ -294,7 +294,7 @@ class FGN_sampler:
 
         values = []
         for trail in range(len(all_)):
-            values.append(trail.trail[0])
+            values.append(all_(trail).trail[0])
         
         return heapq.nlargest(n, range(len(values)), key=values.__getitem__)
 
