@@ -203,6 +203,7 @@ class Objective(object):
         # compute objective
         self.model.eval() # set to eval temporarly
         selected_paths = self.paths 
+        print(f"in side BO {len(selected_paths)}")
         outputs = self.model(*get_model_input(self.get_selected_feature(selected_paths),self.device))
 
         print(outputs)
