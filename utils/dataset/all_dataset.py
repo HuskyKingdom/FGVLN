@@ -881,7 +881,7 @@ class BeamDataset(Dataset):
     
     def add_FGNs(self,features, boxes, probs, masks, positive_path_feature,replace_feature, M):
         
-        for mask in M:
+        for mask in range(len(M)):
 
             for elem in range(len(positive_path_feature)):
 
