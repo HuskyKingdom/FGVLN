@@ -2,8 +2,8 @@ import random
 import optuna
 import torch
 import numpy as np
-from utils.dataset.common import randomize_regions,randomize_tokens
-
+from utils.dataset.common import randomize_regions,randomize_tokens,pad_packed
+import torch.nn.functional as F
 
 def get_model_input(batch,device):
     (
@@ -216,8 +216,6 @@ class Objective(object):
 
 
 
-
-
         # generate FGN_____________
         
         # get beam paths features
@@ -252,20 +250,20 @@ class Objective(object):
             elif elem == 3:
                 masks.append(np.hstack(FGN))
 
-        
-        
+    
 
 
-        # compute objective
+        # compute objective_____________
         self.model.eval() # set to eval temporarly
-        
-        
-        outputs = self.model(*get_model_input(self.wrap_features(features, boxes, probs, masks, path_id, instruction_index),self.device))
+        warped_features = self.wrap_features(features, boxes, probs, masks, path_id, instruction_index)
+        outputs = self.model(*get_model_input(warped_features,self.device))
 
-        print(f"out | {outputs}")
+        target = warped_features[0]
+        prediction = pad_packed(outputs["ranking"].squeeze(1), warped_features[13])
+        loss = F.cross_entropy(prediction, target, ignore_index=-1)
         
 
-        return 0
+        return loss
 
 
 class FGN_sampler:
