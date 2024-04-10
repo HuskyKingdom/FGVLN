@@ -231,7 +231,6 @@ class Objective(object):
             FGN = [None] * len(positive_path_feature[elem])
 
             for timestep in range(len(M)):
-                print(f"replace {torch.from_numpy(np.array(replace_feature[0])).float().shape} | positive {torch.from_numpy(np.array(positive_path_feature[0][0])).float().shape}")
                 FGN[timestep] = replace_feature[elem] if M[timestep] == 1 else positive_path_feature[elem][timestep]
             
             # append to positives
@@ -244,15 +243,15 @@ class Objective(object):
             elif elem == 3:
                 masks.append(np.vstack(FGN))
 
-        print(f"features shape {torch.from_numpy(np.array(features)).float().shape}")
+        
         
 
 
         # compute objective
         self.model.eval() # set to eval temporarly
-        selected_paths = self.paths
         
-        outputs = self.model(*get_model_input(self.get_selected_feature(selected_paths),self.device))
+        
+        outputs = self.model(*get_model_input(self.wrap_features(features, boxes, probs, masks, path_id, instruction_index),self.device))
 
         print(f"out | {outputs}")
         
