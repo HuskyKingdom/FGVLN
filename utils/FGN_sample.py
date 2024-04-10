@@ -60,7 +60,7 @@ def get_model_input(batch,device):
         -1, inputs[6].size(2), inputs[6].size(3)
     )
 
-    print(f"| device {image_features.device}")
+    print(f"| device {image_features.shape}")
 
     return (
         instr_tokens,
