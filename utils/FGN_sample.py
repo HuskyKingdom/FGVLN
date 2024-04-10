@@ -98,6 +98,11 @@ class Objective(object):
             int, self.datasetIns._beam_data[self.beam_index]["instr_id"].split("_")
         )
 
+        instr_tokens = torch.tensor(vln_item["instruction_tokens"][instruction_index])
+        instr_mask = instr_tokens > 0
+        instr_highlights = torch.tensor([])
+        segment_ids = torch.zeros_like(instr_tokens)
+        instr_highlights = torch.tensor([])
 
         scan_id = vln_item["scan"]
         heading = vln_item["heading"]
@@ -126,17 +131,24 @@ class Objective(object):
     
     def wrap_features(self,features, boxes, probs, masks, path_id, instruction_index):
 
-        _ = None # ignored returns
+        vln_index = self.datasetIns._beam_to_vln[self.beam_index]
+        vln_item = self.datasetIns._vln_data[vln_index]
 
-        # get the order label of trajectory
-        ordering_target = []
-        order_atteneded_visual_feature = 1
+        path_id, instruction_index = map(
+            int, self.datasetIns._beam_data[self.beam_index]["instr_id"].split("_")
+        )
 
         instr_tokens = torch.tensor(vln_item["instruction_tokens"][instruction_index])
         instr_mask = instr_tokens > 0
         instr_highlights = torch.tensor([])
         segment_ids = torch.zeros_like(instr_tokens)
         instr_highlights = torch.tensor([])
+
+        _ = None # ignored returns
+
+        # get the order label of trajectory
+        ordering_target = []
+        order_atteneded_visual_feature = 1
 
 
         # convert data into tensors
