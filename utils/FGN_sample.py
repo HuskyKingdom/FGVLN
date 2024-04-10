@@ -122,7 +122,7 @@ class Objective(object):
             masks.append(np.hstack(m))
             # store positive 
             positive_path_feature = (f,b,p,m) if i == 0 else positive_path_feature
-            replace_feature = (f[-1],b[-1],p[-1],m[-1]) if i == 1 else replace_feature
+            replace_feature = (f[-2],b[-2],p[-2],m[-2]) if i == 1 else replace_feature
             i += 1
         
         return features, boxes, probs, masks, path_id, instruction_index, positive_path_feature, replace_feature
