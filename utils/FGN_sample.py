@@ -267,7 +267,7 @@ class Objective(object):
         loss = F.cross_entropy(prediction, target, ignore_index=-1)
         
 
-        return -loss
+        return loss
 
 
 class FGN_sampler:
