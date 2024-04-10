@@ -202,9 +202,11 @@ class Objective(object):
         for i in range(len(M)):
             FGN[i] = self.replace if M[i] == 1 else self.positive_path[i]
 
+        print(f"FGB {FGN}")
+
         # compute objective
         self.model.eval() # set to eval temporarly
-        selected_paths = self.paths 
+        selected_paths = self.paths
         
         outputs = self.model(*get_model_input(self.get_selected_feature(selected_paths),self.device))
 
