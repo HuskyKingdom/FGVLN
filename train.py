@@ -79,7 +79,7 @@ def main():
 
     # move/distribute model to device
     model.to(device)
-    # model = wrap_distributed_model(model, local_rank)
+    model = wrap_distributed_model(model, local_rank)
 
     train_data_loader, _, val_seen_data_loader, val_unseen_data_loader = load_dataloader(args, default_gpu, logger, local_rank,model)
 
