@@ -211,7 +211,7 @@ class Objective(object):
         beampaths = self.paths
         features, boxes, probs, masks, path_id, instruction_index = self.get_selected_feature(beampaths)
 
-        print(f" feature {torch.from_numpy(np.array(features)).float()} | box {torch.from_numpy(np.array(boxes)).float()} | prob {torch.from_numpy(np.array(probs)).float()} | mask {torch.from_numpy(np.array(masks)).float()}")
+        print(f" feature {torch.from_numpy(np.array(features)).float().shape} | box {torch.from_numpy(np.array(boxes)).float().shape} | prob {torch.from_numpy(np.array(probs)).float().shape} | mask {torch.from_numpy(np.array(masks)).float().shape}")
             
         
         FGN = [None] * len(self.positive_path)
