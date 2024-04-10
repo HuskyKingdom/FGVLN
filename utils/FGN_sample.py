@@ -131,10 +131,6 @@ class Objective(object):
     
     def wrap_features(self,features, boxes, probs, masks, path_id, instruction_index):
 
-
-        
-
-
         _ = None # ignored returns
 
         # get the order label of trajectory
@@ -241,7 +237,7 @@ class Objective(object):
             elif elem == 2:
                 probs.append(np.vstack(FGN))
             elif elem == 3:
-                masks.append(np.vstack(FGN))
+                masks.append(np.hstack(FGN))
 
         
         
