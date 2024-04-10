@@ -19,7 +19,6 @@ from scripts.video_process.gen_instructions4train import run_insertion
 from tqdm import tqdm
 
 def pad_packed(t: torch.Tensor, mask: Union[torch.Tensor, torch.BoolTensor]) -> torch.Tensor:
-    print(f"out {t} | mask {mask}")
     mask = mask.bool()
     out = mask.clone().to(t.dtype)
     out[mask] = t
