@@ -109,6 +109,8 @@ class Objective(object):
 
         # get path features
         features, boxes, probs, masks = [], [], [], []
+        positive_path_md5 = None
+        i = 0
         
         for path in selected_paths:
             f, b, p, m = self.datasetIns._get_path_features(scan_id, path, heading)
@@ -116,13 +118,19 @@ class Objective(object):
             boxes.append(np.vstack(b))
             probs.append(np.vstack(p))
             masks.append(np.hstack(m))
+            # store positive 
+            positive_path_md5 = (f,b,p,m) if i == 0 else positive_path_md5
+            i += 1
         
-        return features, boxes, probs, masks, path_id, instruction_index
+        return features, boxes, probs, masks, path_id, instruction_index, positive_path_md5
 
 
 
     
     def wrap_features(self,features, boxes, probs, masks, path_id, instruction_index):
+
+
+        
 
 
         _ = None # ignored returns
@@ -209,9 +217,12 @@ class Objective(object):
         
         # get beam paths features
         beampaths = self.paths
-        features, boxes, probs, masks, path_id, instruction_index = self.get_selected_feature(beampaths)
+        features, boxes, probs, masks, path_id, instruction_index,positive_path_md5  = self.get_selected_feature(beampaths)
 
-        print(f" feature {torch.from_numpy(np.array(features)).float().shape} | box {torch.from_numpy(np.array(boxes)).float().shape} | prob {torch.from_numpy(np.array(probs)).float().shape} | mask {torch.from_numpy(np.array(masks)).float().shape}")
+        print(f" feature {torch.from_numpy(np.array(positive_path_md5[0])).float().shape} | 
+              box {torch.from_numpy(np.array(positive_path_md5[1])).float().shape} | 
+              prob {torch.from_numpy(np.array(positive_path_md5[2])).float().shape} | 
+              mask {torch.from_numpy(np.array(positive_path_md5[3])).float().shape}")
             
         
         FGN = [None] * len(self.positive_path)
