@@ -98,11 +98,6 @@ class Objective(object):
             int, self.datasetIns._beam_data[self.beam_index]["instr_id"].split("_")
         )
 
-        instr_tokens = torch.tensor(vln_item["instruction_tokens"][instruction_index])
-        instr_mask = instr_tokens > 0
-        instr_highlights = torch.tensor([])
-        segment_ids = torch.zeros_like(instr_tokens)
-        instr_highlights = torch.tensor([])
 
         scan_id = vln_item["scan"]
         heading = vln_item["heading"]
@@ -136,6 +131,12 @@ class Objective(object):
         # get the order label of trajectory
         ordering_target = []
         order_atteneded_visual_feature = 1
+
+        instr_tokens = torch.tensor(vln_item["instruction_tokens"][instruction_index])
+        instr_mask = instr_tokens > 0
+        instr_highlights = torch.tensor([])
+        segment_ids = torch.zeros_like(instr_tokens)
+        instr_highlights = torch.tensor([])
 
 
         # convert data into tensors
