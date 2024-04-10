@@ -208,7 +208,7 @@ class Objective(object):
         
         outputs = self.model(*get_model_input(self.get_selected_feature(selected_paths),self.device))
 
-        print(outputs)
+        print(f"out | {outputs}")
         
 
         return 0
