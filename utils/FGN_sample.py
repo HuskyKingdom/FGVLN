@@ -285,7 +285,7 @@ class FGN_sampler:
         self.vln_index = vln_index
         self.target = target
 
-        self.max_trj_len = len(paths[0])
+        self.max_trj_len = 8
         self.iteration = iteration
         self.device = next(self.model.parameters()).device
         
