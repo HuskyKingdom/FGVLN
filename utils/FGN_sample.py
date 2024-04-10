@@ -205,13 +205,7 @@ class Objective(object):
 
     def __call__(self, trial):
 
-        # sample M
-        M = []
 
-        for i in range(self.p_len):
-            m = trial.suggest_int(f"m_{i}",0,1)
-            M.append(m)
-        
 
 
 
@@ -221,12 +215,20 @@ class Objective(object):
         beampaths = self.paths
         features, boxes, probs, masks, path_id, instruction_index,positive_path_feature,replace_feature  = self.get_selected_feature(beampaths)
 
-        print(f"features shape {torch.from_numpy(np.array(positive_path_feature[0])).float().shape} | replace shape {torch.from_numpy(np.array(replace_feature[0])).float().shape}")
+        # sample M
+        M = []
+
+        for i in range(len(positive_path_feature[0])):
+            m = trial.suggest_int(f"m_{i}",0,1)
+            M.append(m)
+        
+
+        
 
         # unpack positive path features & replace to produce FGN
         for elem in range(len(positive_path_feature)):
 
-            FGN = [None] * len(self.positive_path)
+            FGN = [None] * len(positive_path_feature[elem])
 
             for timestep in range(len(M)):
                 FGN[timestep] = replace_feature[timestep] if M[i] == 1 else self.positive_path[elem][timestep]
@@ -241,7 +243,7 @@ class Objective(object):
             elif elem == 3:
                 masks.append(np.vstack(FGN))
 
-        
+        print(f"features shape {torch.from_numpy(np.array(features)).float().shape}")
         
 
 
