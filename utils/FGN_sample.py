@@ -109,7 +109,8 @@ class Objective(object):
 
         # get path features
         features, boxes, probs, masks = [], [], [], []
-        positive_path_md5 = None
+        positive_path_feature = None
+        replace_feature = None
         i = 0
         
         for path in selected_paths:
@@ -119,10 +120,11 @@ class Objective(object):
             probs.append(np.vstack(p))
             masks.append(np.hstack(m))
             # store positive 
-            positive_path_md5 = (f,b,p,m) if i == 0 else positive_path_md5
+            positive_path_feature = (f,b,p,m) if i == 0 else positive_path_feature
+            replace_feature = (f[-1],b[-1],p[-1],m[-1]) if i == 1 else replace_feature
             i += 1
         
-        return features, boxes, probs, masks, path_id, instruction_index, positive_path_md5
+        return features, boxes, probs, masks, path_id, instruction_index, positive_path_feature, replace_feature
 
 
 
@@ -217,19 +219,29 @@ class Objective(object):
         
         # get beam paths features
         beampaths = self.paths
-        features, boxes, probs, masks, path_id, instruction_index,positive_path_md5  = self.get_selected_feature(beampaths)
+        features, boxes, probs, masks, path_id, instruction_index,positive_path_feature,replace_feature  = self.get_selected_feature(beampaths)
 
-        print(f" feature {torch.from_numpy(np.array(positive_path_md5[0])).float().shape} | \
-              box {torch.from_numpy(np.array(positive_path_md5[1])).float().shape} |  \
-              prob {torch.from_numpy(np.array(positive_path_md5[2])).float().shape} |  \
-              mask {torch.from_numpy(np.array(positive_path_md5[3])).float().shape}")
+        # unpack positive path features
+        for elem in range(len(positive_path_feature)):
+
+            FGN = [None] * len(self.positive_path)
+
+            for timestep in range(len(M)):
+                FGN[timestep] = replace_feature[timestep] if M[i] == 1 else self.positive_path[elem][timestep]
             
-        
-        FGN = [None] * len(self.positive_path)
-        for i in range(len(M)):
-            FGN[i] = self.replace if M[i] == 1 else self.positive_path[i]
+            # append to positives
+            if elem == 0:
+                features.append(np.vstack(FGN))
+            elif elem == 1:
+                boxes.append(np.vstack(FGN))
+            elif elem == 2:
+                probs.append(np.vstack(FGN))
+            elif elem == 3:
+                masks.append(np.vstack(FGN))
 
-        print(f"FGB {FGN}")
+        print(f"features shape {torch.from_numpy(np.array(features)).float().shape}")
+        
+
 
         # compute objective
         self.model.eval() # set to eval temporarly
