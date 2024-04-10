@@ -166,7 +166,7 @@ class Objective(object):
         instr_highlights = instr_highlights.repeat(len(features), 1).long()
 
 
-        print(f"in side BO {image_features.shape}")
+        
 
         return (
             target, # ranking target
