@@ -290,7 +290,7 @@ class FGN_sampler:
         self.device = next(self.model.parameters()).device
         
     
-    def find_n_best(all_,n): # return index of n best result
+    def find_n_best(self,all_,n): # return index of n best result
 
         values = []
         for trail in range(len(all_)):

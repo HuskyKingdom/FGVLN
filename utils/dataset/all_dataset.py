@@ -1002,7 +1002,7 @@ class BeamDataset(Dataset):
             
             self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
             mask_indicators = self.FGN_sampler.sample_fgn(self.args.num_FGN)
-            print("INSIDE DDDDDDDDDDDDDDDDDDDDD")
+            
                     
             
         else:
