@@ -889,7 +889,7 @@ class BeamDataset(Dataset):
 
                 
 
-                for timestep in range(len(M[mask])):
+                for timestep in range(len(FGN)):
                     print(f"FGN {torch.from_numpy(np.array(replace_feature[elem])).float().shape} | pos {torch.from_numpy(np.array(positive_path_feature[elem][timestep])).float().shape}")
                     FGN[timestep] = replace_feature[elem] if M[mask][timestep] == 1 else positive_path_feature[elem][timestep]
                 
