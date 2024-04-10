@@ -165,6 +165,9 @@ class Objective(object):
         ordering_target = torch.tensor(ordering_target)
         instr_highlights = instr_highlights.repeat(len(features), 1).long()
 
+
+        print(f"in side BO {image_features.shape}")
+
         return (
             target, # ranking target
             image_features, # vit image features
@@ -203,7 +206,7 @@ class Objective(object):
         # compute objective
         self.model.eval() # set to eval temporarly
         selected_paths = self.paths 
-        print(f"in side BO {len(selected_paths)}")
+        
         outputs = self.model(*get_model_input(self.get_selected_feature(selected_paths),self.device))
 
         print(outputs)
