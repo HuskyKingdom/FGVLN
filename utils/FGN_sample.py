@@ -260,7 +260,8 @@ class Objective(object):
 
         target = warped_features[0]
         prediction = pad_packed(outputs["ranking"].squeeze(1), warped_features[13].cuda(device=self.device, non_blocking=True))
-
+        prediction = prediction.unsqueeze(0)
+        
         print(f"predic {prediction.shape} | target {target}")
         loss = F.cross_entropy(prediction, target, ignore_index=-1)
         
