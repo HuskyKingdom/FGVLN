@@ -256,7 +256,8 @@ class Objective(object):
         # compute objective_____________
         self.model.eval() # set to eval temporarly
         warped_features = self.wrap_features(features, boxes, probs, masks, path_id, instruction_index)
-        outputs = self.model(*get_model_input(warped_features,self.device))
+        with torch.no_grad():
+            outputs = self.model(*get_model_input(warped_features,self.device))
 
         target = warped_features[0]
         prediction = pad_packed(outputs["ranking"].squeeze(1), warped_features[13].cuda(device=self.device, non_blocking=True))
