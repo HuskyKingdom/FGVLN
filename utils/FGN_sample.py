@@ -263,7 +263,6 @@ class Objective(object):
         prediction = prediction.unsqueeze(0)
         target = torch.tensor([target],device = self.device)
 
-        print(f"predic {prediction.shape} | target {target}")
         loss = F.cross_entropy(prediction, target, ignore_index=-1)
         
 
