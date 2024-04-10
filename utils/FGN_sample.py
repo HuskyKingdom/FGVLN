@@ -219,9 +219,9 @@ class Objective(object):
         beampaths = self.paths
         features, boxes, probs, masks, path_id, instruction_index,positive_path_md5  = self.get_selected_feature(beampaths)
 
-        print(f" feature {torch.from_numpy(np.array(positive_path_md5[0])).float().shape} | 
-              box {torch.from_numpy(np.array(positive_path_md5[1])).float().shape} | 
-              prob {torch.from_numpy(np.array(positive_path_md5[2])).float().shape} | 
+        print(f" feature {torch.from_numpy(np.array(positive_path_md5[0])).float().shape} | \
+              box {torch.from_numpy(np.array(positive_path_md5[1])).float().shape} |  \
+              prob {torch.from_numpy(np.array(positive_path_md5[2])).float().shape} |  \
               mask {torch.from_numpy(np.array(positive_path_md5[3])).float().shape}")
             
         
