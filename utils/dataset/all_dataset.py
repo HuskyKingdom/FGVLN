@@ -1001,9 +1001,9 @@ class BeamDataset(Dataset):
                 if not self._traj_judge:
                     order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
 
-            
-            self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
-            mask_indicators = self.FGN_sampler.sample_fgn(self.args.num_FGN)
+            if target != -1: # only do this when we have positive sample
+                self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
+                mask_indicators = self.FGN_sampler.sample_fgn(self.args.num_FGN)
             
                     
             
@@ -1160,7 +1160,8 @@ class BeamDataset(Dataset):
 
         
         # add FGNs
-        features, boxes, probs, masks = self.add_FGNs(features, boxes, probs, masks, positive_path_feature,replace_feature, mask_indicators)
+        if target != -1: # only do this when we have positive sample
+            features, boxes, probs, masks = self.add_FGNs(features, boxes, probs, masks, positive_path_feature,replace_feature, mask_indicators)
 
         # get the order label of trajectory
         ordering_target = []
