@@ -27,7 +27,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --ranking   \
     --batch_size 32    \
     --num_epochs 30 \
-    --trial_type 0 \
+    --trial_type 1 \
     --num_FGN 1
 # Place other commands here
 echo "end of job"
