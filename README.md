@@ -23,7 +23,7 @@ Random Sample FGN:
 
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
-    --nproc_per_node 8   \
+    --nproc_per_node 4   \
     --master_port 5558   \
     -m train   \
     --from_pretrained data/trained/pretrain_lily_new.bin \
@@ -40,7 +40,7 @@ BO-based Sample FGN:
 
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
-    --nproc_per_node 8   \
+    --nproc_per_node 4   \
     --master_port 5558   \
     -m train   \
     --from_pretrained data/trained/pretrain_lily_new.bin \

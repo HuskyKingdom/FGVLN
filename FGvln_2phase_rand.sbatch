@@ -19,13 +19,15 @@
 # Run commands:
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --nproc_per_node 4   \
-    --master_port 5558   \
+    --master_port 5559   \
     -m train   \
-    --from_pretrained data/trained/pretrain_lily_new.bin \
-    --save_name FGvln_1phase  \
-    --masked_vision \
-    --masked_language \
-    --batch_size 12    \
+    --from_pretrained result/FGvln_1phase/data/29.bin \
+    --save_name FGvln_2e5_Rnd_1FG_2phase  \
+    --shuffle_visual_features   \
+    --ranking   \
+    --batch_size 16    \
     --num_epochs 30 \
+    --trial_type 0 \
+    --num_FGN 1
 # Place other commands here
 echo "end of job"
