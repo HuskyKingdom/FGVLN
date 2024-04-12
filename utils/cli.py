@@ -509,4 +509,11 @@ def get_parser() -> argparse.ArgumentParser:
         help="number of FG negatives",
     )
 
+    parser.add_argument(
+        "--FGN",
+        default=False,
+        action="store_true",
+        help="whether start FGN sample",
+    )
+
     return parser
