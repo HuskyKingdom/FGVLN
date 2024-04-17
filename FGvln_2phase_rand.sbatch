@@ -25,8 +25,8 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --save_name FGvln_2e5_Rnd_1FG_2phase  \
     --shuffle_visual_features   \
     --ranking   \
-    --batch_size 12    \
-    --num_epochs 40 \
+    --batch_size 8    \
+    --num_epochs 30 \
     --FGN \
     --trial_type 0 \
     --num_FGN 1
