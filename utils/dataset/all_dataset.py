@@ -905,6 +905,19 @@ class BeamDataset(Dataset):
 
         return features, boxes, probs, masks
 
+    def add_padding_ele(self,number, features, boxes, probs,masks):
+        
+        for mask in range(len(number)):
+                
+            # append to positives
+
+            features.append(features[-1])
+            boxes.append(features[-1])
+            probs.append(features[-1])
+            masks.append(features[-1])
+
+        return features, boxes, probs, masks
+
     def __getitem__(self, beam_index: int):
         vln_index = self._beam_to_vln[beam_index]
         vln_item = self._vln_data[vln_index]
@@ -1163,6 +1176,9 @@ class BeamDataset(Dataset):
         # add FGNs
         if target != -1 and self.args.ranking and self.args.FGN: # only do this when we have positive sample
             features, boxes, probs, masks = self.add_FGNs(features, boxes, probs, masks, positive_path_feature,replace_feature, mask_indicators)
+        else:
+            # add to the required batch len
+            features, boxes, probs, masks = self.add_padding_ele(self.args.num_FGN,features, boxes, probs, masks) 
 
         # get the order label of trajectory
         ordering_target = []
