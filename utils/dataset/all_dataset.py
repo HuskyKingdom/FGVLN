@@ -1173,11 +1173,11 @@ class BeamDataset(Dataset):
 
         
         # add FGNs
-        # if target != -1 and self.args.ranking and self.args.FGN: # only do this when we have positive sample
-        #     features, boxes, probs, masks = self.add_FGNs(features, boxes, probs, masks, positive_path_feature,replace_feature, mask_indicators)
-        # else:
+        if target != -1 and self.args.ranking and self.args.FGN: # only do this when we have positive sample
+            features, boxes, probs, masks = self.add_FGNs(features, boxes, probs, masks, positive_path_feature,replace_feature, mask_indicators)
+        else:
             # add to the required batch len
-        features, boxes, probs, masks = self.add_padding_ele(self.args.num_FGN,features, boxes, probs, masks) 
+            features, boxes, probs, masks = self.add_padding_ele(self.args.num_FGN,features, boxes, probs, masks) 
 
         # get the order label of trajectory
         ordering_target = []
