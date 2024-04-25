@@ -26,7 +26,7 @@ def get_optimization(args, model, train_data_loader_length, logger):
         # calculate learning rate schedule
         t_total = (
             train_data_loader_length // args.gradient_accumulation_steps
-        ) * args.num_epochs
+        ) * args.num_epochs * 2 # for extended epochs
         warmup_steps = args.warmup_proportion * t_total
         adjusted_t_total = warmup_steps + args.cooldown_factor * (t_total - warmup_steps)
         scheduler = (WarmupLinearSchedule(
