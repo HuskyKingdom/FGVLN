@@ -516,4 +516,12 @@ def get_parser() -> argparse.ArgumentParser:
         help="whether start FGN sample",
     )
 
+
+    parser.add_argument(
+        "--Full",
+        default=False,
+        action="store_true",
+        help="Full training with 8 gpus?",
+    )
+
     return parser
