@@ -70,7 +70,7 @@ def main():
     vln_data = f"data/task/{args.r2r_prefix}R2R_{args.split}.json"
     print(vln_data)
     
-    dataset = load_BeamDataset(args.split, args, tokenizer, features_reader, True, Train=False)
+    dataset = load_BeamDataset(args.split, args, tokenizer, features_reader, True, Train=False,model = None)
 
 
     data_loader = DataLoader(
