@@ -228,7 +228,7 @@ class Objective(object):
         # sample M
         M = []
 
-        for i in range(len(self.pos_len)):
+        for i in range(self.pos_len):
             m = trial.suggest_int(f"m_{i}",0,1)
             M.append(m)
         
