@@ -237,10 +237,9 @@ class Objective(object):
         # unpack positive path features & replace to produce FGN
         for elem in range(len(positive_path_feature)):
 
-            FGN = [None] * len(positive_path_feature[elem])
+            FGN = positive_path_feature[elem].copy()
 
             for timestep in range(len(M)):
-                print(f"pos_len {self.pos_len}")
                 FGN[timestep] = replace_feature[elem] if M[timestep] == 1 else positive_path_feature[elem][timestep]
             
             # append to positives
