@@ -77,7 +77,7 @@ def get_model_input(batch,device):
 
 
 class Objective(object):
-    def __init__(self, paths, replace, model,datasetIns,beam_index,vln_index,target,device):
+    def __init__(self, paths, replace, model,datasetIns,beam_index,vln_index,target,device,pos_len):
         # Hold this implementation specific arguments as the fields of the class.
         self.positive_path = paths[0]
         self.paths = paths
@@ -89,6 +89,8 @@ class Objective(object):
         self.vln_index = vln_index
         self.target = target
         self.device = device
+
+        self.pos_len = pos_len
 
     def get_selected_feature(self,selected_paths):
 
@@ -226,7 +228,7 @@ class Objective(object):
         # sample M
         M = []
 
-        for i in range(len(positive_path_feature[0])):
+        for i in range(len(self.pos_len)):
             m = trial.suggest_int(f"m_{i}",0,1)
             M.append(m)
         
@@ -300,7 +302,7 @@ class FGN_sampler:
         return heapq.nlargest(n, range(len(values)), key=values.__getitem__)
 
 
-    def sample_fgn(self,num):
+    def sample_fgn(self,num,positive_len):
 
         M = []
 
@@ -309,13 +311,13 @@ class FGN_sampler:
             # random sample num times
             for i in range(num):
 
-                temp_m = [0] * self.max_trj_len 
+                temp_m = [0] * positive_len
 
                 # make sure to alter at least 1 frame
-                rand_index = random.randint(0, self.max_trj_len-1)
+                rand_index = random.randint(0, positive_len-1)
                 temp_m[rand_index] = 1
 
-                for index in range(self.max_trj_len):
+                for index in range(positive_len):
                     if index != rand_index:
                         temp_m[index] = random.randint(0, 1)
 
@@ -325,7 +327,7 @@ class FGN_sampler:
 
             # BO
             study = optuna.create_study(direction='maximize')
-            study.optimize(Objective(self.paths,self.replace, self.model, self.datasetIns,self.beam_index,self.vln_index,self.target,self.device), n_trials=self.iteration)
+            study.optimize(Objective(self.paths,self.replace, self.model, self.datasetIns,self.beam_index,self.vln_index,self.target,self.device,positive_len), n_trials=self.iteration)
             
             all_trials = study.trials
             best_idx = self.find_n_best(all_trials,num)
@@ -333,7 +335,7 @@ class FGN_sampler:
             # formating M and return
             for i in range(len(best_idx)):
                 temp_m = []
-                for index in range(self.max_trj_len):
+                for index in range(positive_len):
                     temp_m.append(all_trials[i].params[f"m_{index}"])
                 
                 M.append(temp_m)

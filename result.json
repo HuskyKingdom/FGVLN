@@ -1,0 +1,15 @@
+{
+  "length": 9.741,
+  "nav_error": 3.5457,
+  "oracle_success_rate": 0.7454,
+  "success_rate": 0.6547,
+  "spl": 0.6064
+}
+
+{
+  "length": 9.774,
+  "nav_error": 3.1392,
+  "oracle_success_rate": 0.7778,
+  "success_rate": 0.708,
+  "spl": 0.6579
+}
