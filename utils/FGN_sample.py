@@ -228,9 +228,6 @@ class Objective(object):
         # sample M
         M = []
 
-        if self.pos_len > 8:
-            self.pos_len = 8
-
         for i in range(self.pos_len):
             m = trial.suggest_int(f"m_{i}",0,1)
             M.append(m)
@@ -308,6 +305,9 @@ class FGN_sampler:
     def sample_fgn(self,num,positive_len):
 
         M = []
+
+        if positive_len > 8: # will be cut
+            positive_len = 8
 
         if self.type == 0:
 
