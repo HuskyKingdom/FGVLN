@@ -885,7 +885,7 @@ class BeamDataset(Dataset):
 
             for elem in range(len(positive_path_feature)):
 
-                FGN = [None] * len(positive_path_feature[elem])
+                FGN = positive_path_feature[elem].copy()
 
                 for timestep in range(len(FGN)):
                     
