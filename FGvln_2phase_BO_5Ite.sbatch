@@ -3,7 +3,7 @@
 # Generic options:
 
 #SBATCH --account=bdliv07  # Run job under project <project>
-#SBATCH --time=48:0:0     
+#SBATCH --time=8:0:0     
 
 # Node resources:
 # (choose between 1-4 gpus per node)
@@ -22,7 +22,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --master_port 5558   \
     -m train   \
     --from_pretrained result/FGvln_1phase/data/29.bin \
-    --save_name FGvln_2e5_BO_1FG_2phase_5itera  \
+    --save_name FGvln_3e5_1FG_5it  \
     --shuffle_visual_features   \
     --ranking   \
     --batch_size 8    \
@@ -30,6 +30,6 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --FGN \
     --trial_type 1 \
     --num_FGN 1 \
-    --trial_iter 5
+    --trial_iter 5 
 # Place other commands here
 echo "end of job"
