@@ -524,4 +524,12 @@ def get_parser() -> argparse.ArgumentParser:
         help="Full training with 8 gpus?",
     )
 
+
+    parser.add_argument(
+        "--FG_style",
+        default=0,
+        type=int,
+        help="in-domain or our-domain",
+    )
+
     return parser
