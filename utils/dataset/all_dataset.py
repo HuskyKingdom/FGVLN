@@ -1167,7 +1167,19 @@ class BeamDataset(Dataset):
                 probs.append(np.vstack(p))
                 masks.append(np.hstack(m))
                 positive_path_feature = (f,b,p,m) if count == 0 else positive_path_feature
-                replace_feature = (f[-2],b[-2],p[-2],m[-2]) if count == 1 else replace_feature
+                if self.args.FG_style == 0:
+                    replace_feature = (f[-2],b[-2],p[-2],m[-2]) if count == 1 else replace_feature
+                else:
+                    # other scan
+                    index = random.randint(0, len(self._vln_data) - 1)
+                    while(index == vln_index):
+                        # avoid the same path
+                        index = random.randint(0, len(self._vln_data) - 1)
+                    path2 = self._vln_data[index]["path"]
+                    scan_id2 = self._vln_data[index]["scan"]
+                    temp_f, temp_b, temp_p, temp_m = self._get_feature(scan_id2, path2[i], 2)
+                    replace_feature = (temp_f,temp_b,temp_p,temp_m) if count == 1 else replace_feature
+
                 count += 1
 
         
