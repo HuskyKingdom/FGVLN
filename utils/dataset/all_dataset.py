@@ -1177,7 +1177,7 @@ class BeamDataset(Dataset):
                         index = random.randint(0, len(self._vln_data) - 1)
                     path2 = self._vln_data[index]["path"]
                     scan_id2 = self._vln_data[index]["scan"]
-                    temp_f, temp_b, temp_p, temp_m = self._get_feature(scan_id2, path2[i], 2)
+                    temp_f, temp_b, temp_p, temp_m = self._get_feature(scan_id2, path2[2], 2)
                     replace_feature = (temp_f,temp_b,temp_p,temp_m) if count == 1 else replace_feature
 
                 count += 1
