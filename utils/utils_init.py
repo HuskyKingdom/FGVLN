@@ -55,8 +55,7 @@ def get_model_input(batch):
 
     # remove padding samples
     image_features = image_features[opt_mask]
-    print(f"opt mask {opt_mask} shape {opt_mask.shape} \n 
-          image_mask {image_mask} shape {image_mask.shape} \n " )
+    print(f"opt mask {opt_mask} shape {opt_mask.shape} \n image_mask {image_mask} shape {image_mask.shape} \n " )
     image_locations = image_locations[opt_mask]
     image_mask = image_mask[opt_mask]
     instr_tokens = instr_tokens[opt_mask]
