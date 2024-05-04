@@ -19,7 +19,6 @@ CLS_MODEL_FACTORY = {
     "vilbert": ViLBertPreTrainingHeads,
 }
 
-
 class Lily(PreTrainedModel):
     def __init__(self, config, dropout_prob=0.1):
         super().__init__(config)
