@@ -1170,7 +1170,7 @@ class BeamDataset(Dataset):
                 masks.append(np.hstack(m))
                 positive_path_feature = (f,b,p,m) if count == 0 else positive_path_feature
                 if self.args.FG_style == 0:
-                    replace_feature = (f[-2],b[-2],p[-2],m[-2]) if count == 1 else replace_feature
+                    replace_feature = (f[2],b[2],p[2],m[2]) if count == 1 else replace_feature
                 else:
                     # other scan
                     index = random.randint(0, len(self._vln_data) - 1)
