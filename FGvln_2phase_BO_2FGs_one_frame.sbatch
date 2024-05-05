@@ -22,7 +22,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --master_port 5558   \
     -m train   \
     --from_pretrained result/FGvln_1phase/data/29.bin \
-    --save_name FGvln_3e5_2FG_3it_out-domain  \
+    --save_name FGvln_3e5_2FG_3it_out-domain_one_frame  \
     --shuffle_visual_features   \
     --ranking   \
     --batch_size 8    \
