@@ -1258,7 +1258,6 @@ class BeamDataset(Dataset):
         target = torch.tensor(target).long()
         ordering_target = torch.tensor(ordering_target)
         
-        print(f"img {image_features} | shape {image_features.shape}")
         
 
         return (
