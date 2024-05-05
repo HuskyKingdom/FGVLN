@@ -1013,6 +1013,8 @@ class BeamDataset(Dataset):
                 if not self._traj_judge:
                     order_labels = [list(range(self.args.max_path_length))]*self.args.num_negatives
 
+            
+
             if target != -1 and self.args.ranking and self.args.FGN: # only do this when we have positive sample and doing ranking
                 self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
                 mask_indicators = self.FGN_sampler.sample_fgn(self.args.num_FGN,len(selected_paths[0]))
@@ -1189,7 +1191,9 @@ class BeamDataset(Dataset):
                 features, boxes, probs, masks = self.add_FGNs(features, boxes, probs, masks, positive_path_feature,replace_feature, mask_indicators)
             else:
                 # add to the required batch len
-                features, boxes, probs, masks = self.add_padding_ele(self.args.num_FGN,features, boxes, probs, masks) 
+                if self.args.FGN:
+                    features, boxes, probs, masks = self.add_padding_ele(self.args.num_FGN,features, boxes, probs, masks) 
+            
 
         # get the order label of trajectory
         ordering_target = []
@@ -1254,7 +1258,7 @@ class BeamDataset(Dataset):
         target = torch.tensor(target).long()
         ordering_target = torch.tensor(ordering_target)
         
-
+        print(f"img {image_features} | shape {image_features.shape}")
         
 
         return (

@@ -8,10 +8,12 @@ requests
 transformers
 networkx
 lmdb
-
 colorama
 termcolor
 pyfiglet
 einops
 argtyped
 line_profiler
+optuna
+matplotlib
+seaborn
