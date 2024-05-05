@@ -1016,7 +1016,7 @@ class BeamDataset(Dataset):
             
 
             if target != -1 and self.args.ranking and self.args.FGN: # only do this when we have positive sample and doing ranking
-                self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target)
+                self.FGN_sampler = FGN_sampler(selected_paths,self.args.trial_type,selected_paths[1][-1],self.args.trial_iter,self.model,self,beam_index,vln_index,target,self.args.one_frame)
                 mask_indicators = self.FGN_sampler.sample_fgn(self.args.num_FGN,len(selected_paths[0]))
             
                     

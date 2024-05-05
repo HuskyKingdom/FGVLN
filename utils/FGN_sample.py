@@ -77,7 +77,7 @@ def get_model_input(batch,device):
 
 
 class Objective(object):
-    def __init__(self, paths, replace, model,datasetIns,beam_index,vln_index,target,device,pos_len):
+    def __init__(self, paths, replace, model,datasetIns,beam_index,vln_index,target,device,pos_len,one_frame):
         # Hold this implementation specific arguments as the fields of the class.
         self.positive_path = paths[0]
         self.paths = paths
@@ -89,6 +89,7 @@ class Objective(object):
         self.vln_index = vln_index
         self.target = target
         self.device = device
+        self.one_frame = one_frame
 
         self.pos_len = pos_len
 
@@ -228,12 +229,21 @@ class Objective(object):
         # sample M
         M = []
 
-        for i in range(self.pos_len):
-            m = trial.suggest_int(f"m_{i}",0,1)
-            M.append(m)
         
 
+        
+        # generate FGN with 1 frame
+        if self.one_frame:
+            m = trial.suggest_int(f"frame",0,self.pos_len-1)
+            M = [0] * self.pos_len
+            M[m] = 1
+        else:
+            # multi frames
+            for i in range(self.pos_len):
+                m = trial.suggest_int(f"m_{i}",0,1)
+                M.append(m)
 
+        
         # unpack positive path features & replace to produce FGN
         for elem in range(len(positive_path_feature)):
 
@@ -276,7 +286,7 @@ class FGN_sampler:
 
 
     # sample type = 0 if random otherwise 1 for BO
-    def __init__(self,paths,sample_type,replace,iteration,modle,datasetIns,beam_index,vln_index,target): 
+    def __init__(self,paths,sample_type,replace,iteration,modle,datasetIns,beam_index,vln_index,target,one_frame): 
 
         self.paths = paths
         self.positive = paths[0]
@@ -287,7 +297,7 @@ class FGN_sampler:
         self.beam_index = beam_index
         self.vln_index = vln_index
         self.target = target
-
+        self.one_frame = one_frame
         self.max_trj_len = 8
         self.iteration = iteration
         self.device = next(self.model.parameters()).device
@@ -330,18 +340,28 @@ class FGN_sampler:
 
             # BO
             study = optuna.create_study(direction='maximize')
-            study.optimize(Objective(self.paths,self.replace, self.model, self.datasetIns,self.beam_index,self.vln_index,self.target,self.device,positive_len), n_trials=self.iteration)
+            study.optimize(Objective(self.paths,self.replace, self.model, self.datasetIns,self.beam_index,self.vln_index,self.target,self.device,positive_len,self.one_frame), n_trials=self.iteration)
             
             all_trials = study.trials
             best_idx = self.find_n_best(all_trials,num)
 
+            M = []
+            
             # formating M and return
-            for i in range(len(best_idx)):
-                temp_m = []
-                for index in range(positive_len):
-                    temp_m.append(all_trials[i].params[f"m_{index}"])
-                
-                M.append(temp_m)
+            if self.one_frame:
+                for i in range(len(best_idx)):
+                    loc = all_trials[i].params[f"frame"]
+                    temp_m = [0] * positive_len
+                    temp_m[loc] = 1
+                    M.append(temp_m)
+
+            else:
+                for i in range(len(best_idx)):
+                    temp_m = []
+                    for index in range(positive_len):
+                        temp_m.append(all_trials[i].params[f"m_{index}"])
+                    
+                    M.append(temp_m)
 
            
         return M

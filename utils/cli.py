@@ -532,4 +532,12 @@ def get_parser() -> argparse.ArgumentParser:
         help="in-domain or our-domain",
     )
 
+    parser.add_argument(
+        "--one_frame",
+        default=False,
+        action="store_true",
+        help="1 frame or multiframe bo",
+    )
+
+
     return parser

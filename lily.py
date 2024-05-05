@@ -68,8 +68,7 @@ class Lily(PreTrainedModel):
     ) -> Dict[str, torch.Tensor]:
         
     
-        print(f"img {image_features} | shape {image_features.shape}")
-        print(f"im at mask {image_attention_mask} | shape {image_attention_mask.shape}")
+        print(f"changes applied")
         
   
         (
