@@ -3,7 +3,7 @@
 # Generic options:
 
 #SBATCH --account=bdliv07  # Run job under project <project>
-#SBATCH --time=8:0:0     
+#SBATCH --time=48:0:0     
 
 # Node resources:
 # (choose between 1-4 gpus per node)
