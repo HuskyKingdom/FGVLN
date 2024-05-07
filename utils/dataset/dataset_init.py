@@ -189,6 +189,21 @@ def load_dataloader(args, default_gpu, logger, local_rank, model) -> str:
         val_seen_dataset = {}
         val_unseen_dataset = {}
     
+
+    if args.mini:
+            train_dataset = Subset(
+                train_dataset,
+                np.random.choice(range(len(train_dataset)), size=950, replace=False),  # type: ignore
+            )
+            val_seen_dataset = Subset(
+                val_seen_dataset,
+                np.random.choice(range(len(val_seen_dataset)), size=50, replace=False),  # type: ignore
+            )
+            val_unseen_dataset = Subset(
+                val_unseen_dataset,
+                np.random.choice(range(len(val_unseen_dataset)), size=50, replace=False),  # type: ignore
+            )
+
     if local_rank == -1:
         train_sampler = RandomSampler(train_dataset)
         if not args.no_test:
