@@ -5,6 +5,7 @@ import numpy as np
 from utils.dataset.common import randomize_regions,randomize_tokens,pad_packed
 import torch.nn.functional as F
 import heapq
+import copy
 
 def get_model_input(batch,device):
     (
