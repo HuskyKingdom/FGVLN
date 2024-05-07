@@ -91,6 +91,7 @@ class Objective(object):
         self.device = device
         self.one_frame = one_frame
         self.update_step = 0
+        self.target_model = None
 
         self.pos_len = pos_len
 
@@ -280,7 +281,7 @@ class Objective(object):
 
         loss = F.cross_entropy(prediction, target, ignore_index=-1)
         
-
+        
         return loss
 
 
