@@ -264,7 +264,7 @@ class Objective(object):
             elif elem == 3:
                 masks.append(np.hstack(FGN))
 
-        if self.update_step % 200 == 0:
+        if self.update_step % 800 == 0:
             self.target_model = copy.deepcopy(self.model)
 
 
@@ -281,7 +281,7 @@ class Objective(object):
 
         loss = F.cross_entropy(prediction, target, ignore_index=-1)
         
-        
+        self.update_step += 1
         return loss
 
 
