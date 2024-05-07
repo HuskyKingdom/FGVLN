@@ -190,17 +190,21 @@ def load_dataloader(args, default_gpu, logger, local_rank, model) -> str:
         val_unseen_dataset = {}
     
     if args.mini:
+            x = np.random.choice(range(len(train_dataset)), size=850, replace=False)
+            y = np.random.choice(range(len(val_seen_dataset)), size=120, replace=False)
+            z = np.random.choice(range(len(val_unseen_dataset)), size=120, replace=False)
+            print(f"x \n {x} \n y \n {y} \n z {z} \n ")
             train_dataset = Subset(
                 train_dataset,
-                np.random.choice(range(len(train_dataset)), size=850, replace=False),  # type: ignore
+                x,  # type: ignore
             )
             val_seen_dataset = Subset(
                 val_seen_dataset,
-                np.random.choice(range(len(val_seen_dataset)), size=50, replace=False),  # type: ignore
+                y,  # type: ignore
             )
             val_unseen_dataset = Subset(
                 val_unseen_dataset,
-                np.random.choice(range(len(val_unseen_dataset)), size=50, replace=False),  # type: ignore
+                z,  # type: ignore
             )
 
     if local_rank == -1:
