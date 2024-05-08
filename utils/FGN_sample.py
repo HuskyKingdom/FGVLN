@@ -265,7 +265,7 @@ class Objective(object):
             elif elem == 3:
                 masks.append(np.hstack(FGN))
 
-        if self.update_step % 1500 == 0:
+        if self.update_step % 2500 == 0:
             self.target_model = copy.deepcopy(self.model)
 
 
