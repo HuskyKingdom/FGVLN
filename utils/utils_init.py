@@ -439,10 +439,10 @@ def val_epoch(epoch: int, model, tag, data_loader, writer, default_gpu, args, gl
         f"batch size: {stats[0]} "
         f"{task} loss: {stats[1]} "
     )
-
+    Before = stats
     if local_rank != -1:
         dist.all_reduce(stats, op=dist.ReduceOp.SUM) # type: ignore
-
+    print(f"Before {Before} | After {stats}")
     # write stats to tensorboard
     success_rate = stats[2] / stats[0]
     if default_gpu:
