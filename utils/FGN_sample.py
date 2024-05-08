@@ -305,6 +305,8 @@ class FGN_sampler:
         self.max_trj_len = 8
         self.iteration = iteration
         self.device = next(self.model.parameters()).device
+
+        print(f"SAMPLER created in {self.device}")
         
     
     def find_n_best(self,all_,n): # return index of n best result
