@@ -5,6 +5,7 @@ import numpy as np
 from utils.dataset.common import randomize_regions,randomize_tokens,pad_packed
 import torch.nn.functional as F
 import heapq
+import copy
 
 def get_model_input(batch,device):
     (
@@ -90,6 +91,8 @@ class Objective(object):
         self.target = target
         self.device = device
         self.one_frame = one_frame
+        self.update_step = 0
+        self.target_model = None
 
         self.pos_len = pos_len
 
@@ -262,14 +265,15 @@ class Objective(object):
             elif elem == 3:
                 masks.append(np.hstack(FGN))
 
-    
+        if self.update_step % 800 == 0:
+            self.target_model = copy.deepcopy(self.model)
 
 
         # compute objective_____________
-        self.model.eval() # set to eval temporarly
+        self.target_model.eval() # set to eval temporarly
         warped_features = self.wrap_features(features, boxes, probs, masks, path_id, instruction_index)
         with torch.no_grad():
-            outputs = self.model(*get_model_input(warped_features,self.device))
+            outputs = self.target_model(*get_model_input(warped_features,self.device))
 
         target = warped_features[0]
         prediction = pad_packed(outputs["ranking"].squeeze(1), warped_features[13].cuda(device=self.device, non_blocking=True))
@@ -278,7 +282,7 @@ class Objective(object):
 
         loss = F.cross_entropy(prediction, target, ignore_index=-1)
         
-
+        self.update_step += 1
         return loss
 
 
