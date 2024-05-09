@@ -368,7 +368,7 @@ class FGN_sampler:
                         temp_m.append(all_trials[i].params[f"m_{index}"])
                     candidates.append(temp_m)
                 for item in candidates:
-                    if not all(x == 0 for x in item):
+                    if not all(x == 0 for x in item) and not len(M) == num:
                         M.append(item)
 
            
