@@ -348,9 +348,10 @@ class FGN_sampler:
             study.optimize(Objective(self.paths,self.replace, self.model, self.datasetIns,self.beam_index,self.vln_index,self.target,self.device,positive_len,self.one_frame), n_trials=self.iteration)
             
             all_trials = study.trials
-            best_idx = self.find_n_best(all_trials,num)
+            best_idx = self.find_n_best(all_trials,num+1)
 
             M = []
+            candidates = []
             
             # formating M and return
             if self.one_frame:
@@ -365,8 +366,10 @@ class FGN_sampler:
                     temp_m = []
                     for index in range(positive_len):
                         temp_m.append(all_trials[i].params[f"m_{index}"])
-                    
-                    M.append(temp_m)
+                    candidates.append(temp_m)
+                for item in candidates:
+                    if not all(x == 0 for x in item):
+                        M.append(item)
 
            
         return M
