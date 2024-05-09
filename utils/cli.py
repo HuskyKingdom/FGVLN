@@ -303,7 +303,7 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--learning_rate",
-        default=3e-5,
+        default=4e-5,
         type=float,
         help="The initial learning rate (default: 4e-5)",
     )

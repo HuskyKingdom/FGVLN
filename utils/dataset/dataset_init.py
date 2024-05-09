@@ -196,7 +196,6 @@ def load_dataloader(args, default_gpu, logger, local_rank, model) -> str:
             x = np.load('x.npy')
             y = np.load('y.npy')
             z = np.load('z.npy')
-            # np.random.seed(0) # fixed data
             train_dataset = Subset(
                 train_dataset,
                 x,  # type: ignore 850
