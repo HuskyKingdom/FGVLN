@@ -189,15 +189,13 @@ def load_dataloader(args, default_gpu, logger, local_rank, model) -> str:
         val_seen_dataset = {}
         val_unseen_dataset = {}
     
-    x = np.random.choice(range(len(train_dataset)), size=850, replace=False)
-    y = np.random.choice(range(len(val_seen_dataset)), size=120, replace=False)
-    z = np.random.choice(range(len(val_unseen_dataset)), size=120, replace=False)
+   
 
-    np.save('x.npy', x)
-    np.save('y.npy', y)
-    np.save('z.npy', z)
-    print("SAVED !!!!!!!!!!!!!!!!!")
+
     if args.mini:
+            x = np.load('x.npy')
+            y = np.load('y.npy')
+            z = np.load('z.npy')
             # np.random.seed(0) # fixed data
             train_dataset = Subset(
                 train_dataset,
