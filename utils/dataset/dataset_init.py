@@ -190,7 +190,7 @@ def load_dataloader(args, default_gpu, logger, local_rank, model) -> str:
         val_unseen_dataset = {}
     
    
-
+    print(f"sizes traing {len(train_dataset)} val_seen {len(val_seen_dataset)} val_unseen {len(val_unseen_dataset)}")
 
     if args.mini:
             x = np.load('x.npy')
