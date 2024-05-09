@@ -189,7 +189,7 @@ def load_dataloader(args, default_gpu, logger, local_rank, model) -> str:
         val_seen_dataset = {}
         val_unseen_dataset = {}
     
-    print(f" train {np.random.choice(range(len(train_dataset)), size=850, replace=False)} \n val_seen_dataset {len(val_seen_dataset)} \n val_unseen_dataset {len(val_unseen_dataset)}")
+    print(f" train {len(val_seen_dataset)} \n val_seen_dataset {len(val_seen_dataset)} \n val_unseen_dataset {len(val_unseen_dataset)}")
     if args.mini:
             # np.random.seed(0) # fixed data
             train_dataset = Subset(
