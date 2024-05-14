@@ -22,7 +22,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --master_port 5558   \
     -m train   \
     --from_pretrained result/FGvln_1phase/data/29.bin \
-    --save_name FGvln_3e5_2FG_5it   \
+    --save_name FGvln_3e5_2FG_5it_out-domain  \
     --shuffle_visual_features   \
     --ranking   \
     --batch_size 8    \
@@ -30,6 +30,6 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --FGN \
     --trial_type 1 \
     --num_FGN 2 \
-    --trial_iter 5
+    --FG_style 1
 # Place other commands here
 echo "end of job"
