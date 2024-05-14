@@ -27,6 +27,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --ranking   \
     --batch_size 8    \
     --num_epochs 30 \
+    --trial_iter 5 \
     --FGN \
     --trial_type 1 \
     --num_FGN 1 \
