@@ -29,7 +29,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --num_epochs 30 \
     --FGN \
     --trial_type 1 \
-    --num_FGN 2 \
+    --num_FGN 1 \
     --FG_style 1
 # Place other commands here
 echo "end of job"
