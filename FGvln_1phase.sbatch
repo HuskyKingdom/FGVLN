@@ -27,5 +27,6 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch  \
     --masked_language \
     --batch_size 12    \
     --num_epochs 30 \
+    --learning_rate 2e-5
 # Place other commands here
 echo "end of job"
