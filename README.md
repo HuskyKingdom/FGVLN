@@ -1,11 +1,15 @@
-# FGVLN - Fine-grained VLN
+# FGVLN - Fine-grained Vision-and-Language Navigation via Bayesian Optimization
+
+
+<img src="architecture_overview.png">
+
 
 Official Implementation of FGVLN on CoRL 2024. Draft version.
 
 Contents : [Installation](#install) | [Data Download](#data) | [Training & Evaluating Discriminative](#discri) | [Training & Evaluating Generative](#gene) | [Model Zoos](#models)
 
 
-## Installation <h2 id="install" style="display:none;"> </h2>
+## Installation <h2 name="install" style="display:none;"> </h2>
 
 This project is developed with Python 3.6.13, Pytorch 1.10.1. Please install dependencies by follows:
 
@@ -16,7 +20,7 @@ conda activate fgvln
 
 Information about the dependencies are also provided in *requirements.txt*.
 
-## Download Dataset <h2 id="data" style="display:none;"> </h2>
+## Download Dataset <h2 name="data" style="display:none;"> </h2>
 
 1. Download the checkpoint of VilBERT pre-trained on [Conceptual Captions](https://dl.fbaipublicfiles.com/vilbert-multi-task/pretrained_model.bin) and then put it into *data/*.
 
@@ -57,7 +61,7 @@ data/
 ```
 
 
-## Training & Evaluating Downstream Tasks (Discriminative) <h2 id="discri" style="display:none;"> </h2>
+## Training & Evaluating Downstream Tasks (Discriminative) <h2 name="discri" style="display:none;"> </h2>
 
 ### Training
 
@@ -94,14 +98,14 @@ python scripts/calculate-metrics.py results/fgvln_testing/test_val_unseen/_resul
 ```
 
 
-## Training & Evaluating on Generative Task <h2 id="gene" style="display:none;"> </h2>
+## Training & Evaluating on Generative Task <h2 name="gene" style="display:none;"> </h2>
 
 
 Training generative FGVLN requires MP3D simulator, please follow the instructions provided in [airbert-recurrent](https://github.com/airbert-vln/airbert-recurrentvln) to setup the environment and download the data.
 
 To reproduce our result, simply replace the airbert model with our FGVLN model.
 
-## Model Zoos <h2 id="models" style="display:none;"> </h2>
+## Model Zoos <h2 name="models" style="display:none;"> </h2>
 
 We provide the trained FGVLN models, feel free to test them!
 
