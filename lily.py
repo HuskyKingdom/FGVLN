@@ -54,6 +54,9 @@ class Lily(PreTrainedModel):
 
         self.apply(self.init_bert_weights)
 
+        self.datas = {"0":[],"1":[], "2":[]}
+        self.count = 0
+
     def forward(
         self,
         instr_tokens,
@@ -86,7 +89,6 @@ class Lily(PreTrainedModel):
             output_all_encoded_layers=False,
         )
 
-        # print(pooled_output_t.shape)
 
         linguistic_prediction, vision_prediction, _ = self.cls(
             sequence_output_t, sequence_output_v, pooled_output_t, pooled_output_v
@@ -100,6 +102,90 @@ class Lily(PreTrainedModel):
             pooled_output = pooled_output_t * pooled_output_v
         else:
             assert False
+
+
+        # visualizations of the distribution
+        # import numpy as np
+        # import matplotlib.pyplot as plt
+        # from sklearn.decomposition import PCA
+        # from sklearn.metrics.pairwise import cosine_similarity
+        # import seaborn as sns
+
+
+
+        # plt.ylim(0, 10)
+        # A = pooled_output_v[0].unsqueeze(0).cpu().detach().numpy()
+        # B = pooled_output_v[2].unsqueeze(0).cpu().detach().numpy()
+
+        # l2_beam = np.sqrt(np.sum((A - B) ** 2))
+
+        
+        
+
+        # plt.figure(figsize=(12, 6))
+
+        # plt.subplot(1, 3, 1)
+        # plt.scatter(range(A.shape[1]), A.flatten(), color='r', label='Positive Trajectory', alpha=0.5)
+        # plt.scatter(range(B.shape[1]), B.flatten(), color='b', label='BeamSearched Negative', alpha=0.5)
+        # plt.title('BeamSearched',fontsize=15)
+        # plt.legend()
+
+        # plt.xlabel('Embedding Length',fontsize=12)
+        # plt.ylabel('Value', fontsize=12)
+
+
+        # plt.ylim(0, 10)
+        # A = pooled_output_v[0].unsqueeze(0).cpu().detach().numpy()
+        # B = pooled_output_v[5].unsqueeze(0).cpu().detach().numpy()
+
+        # plt.subplot(1, 3, 2)
+        # plt.scatter(range(A.shape[1]), A.flatten(), color='r', label='Positive Trajectory', alpha=0.5)
+        # plt.scatter(range(B.shape[1]), B.flatten(), color='b', label='RandomShuffled Negative', alpha=0.5)
+        # plt.title('RandomShuffled',fontsize=15)
+        # plt.legend()
+
+        # plt.xlabel('Embedding Length',fontsize=12)
+        # plt.ylabel('Value', fontsize=12)
+
+        # l2_rand = np.sqrt(np.sum((A - B) ** 2))
+
+
+
+        # A = pooled_output_v[0].unsqueeze(0).cpu().detach().numpy()
+        # B = pooled_output_v[6].unsqueeze(0).cpu().detach().numpy()
+
+        # plt.subplot(1, 3, 3)
+        # plt.ylim(0, 10)
+        # plt.scatter(range(A.shape[1]), A.flatten(), color='r', label='Positive Trajectory', alpha=0.5)
+        # plt.scatter(range(B.shape[1]), B.flatten(), color='b', label='Fine-grained Negative', alpha=0.5)
+        # plt.title('Fine-grained',fontsize=15)
+        # plt.legend()
+
+        # plt.xlabel('Embedding Length',fontsize=12)
+        # plt.ylabel('Value', fontsize=12)
+
+        # l2_fine_grained = np.sqrt(np.sum((A - B) ** 2))
+
+
+        # self.datas["0"].append(l2_beam)
+        # self.datas["1"].append(l2_rand)
+        # self.datas["2"].append(l2_fine_grained)
+
+        # plt.savefig("embeding_vis_BO.pdf", format="pdf", dpi=600)
+        # plt.show()
+        # self.count += 1
+
+        # results = {}
+        # if self.count == 100:
+        #     for key, values in self.datas.items():
+        #         mean = np.mean(values)
+        #         variance = np.var(values)
+        #         results[key] = {"mean": mean, "variance": variance}
+        #     for key, stats in results.items():
+        #         print(f"Key: {key}, Mean: {stats['mean']}, Variance: {stats['variance']}")
+        #     assert 1==2
+
+        # split ______________
 
         pooled_output = self.dropout(pooled_output)
 

@@ -6,7 +6,7 @@ from torch.utils.data.distributed import DistributedSampler
 import torch.distributed as dist
 
 from utils.dataset.features_reader import FeaturesReader, BnBFeaturesReader, YTbFeaturesReader, PanoFeaturesReader
-from utils.dataset.all_dataset import YTbDataset, BnBDataset, BeamDataset
+from utils.dataset.all_dataset import YTbDataset, BnBDataset, BeamDataset, TestDataset
 from torch.utils.data import Subset
 
 def load_features_reader(args) -> FeaturesReader:
@@ -65,6 +65,31 @@ def load_pretrian_dataset(args, tokenizer, features_reader, caption_path, testse
 
 def load_BeamDataset(tag, args, tokenizer, features_reader, default_gpu, model, Train = True):
     
+
+    # num_beams=args.num_beams_train
+    # masked_vision=args.masked_vision
+    # masked_language=args.masked_language
+    # shuffle_visual_features=True
+
+
+    # return TestDataset(
+    #     args = args,
+    #     vln_path=f"data/task/{args.r2r_prefix}R2R_{tag}.json",
+    #     beam_path=f"data/beamsearch/{args.beam_prefix}beams_{tag}.json",
+    #     tokenizer=tokenizer,
+    #     features_reader=features_reader,
+    #     num_beams=num_beams,
+    #     num_beams_strict=False,
+    #     training=Train,
+    #     masked_vision=masked_vision,
+    #     masked_language=masked_language,
+    #     default_gpu=default_gpu,
+    #     ground_truth_trajectory=False,
+    #     shuffle_visual_features=shuffle_visual_features,
+    #     model = model
+    # )
+
+        
     if Train:
         num_beams=args.num_beams_train
         masked_vision=args.masked_vision
@@ -75,7 +100,7 @@ def load_BeamDataset(tag, args, tokenizer, features_reader, default_gpu, model, 
         masked_vision=False
         masked_language=False
         shuffle_visual_features=False
-    
+
     return BeamDataset(
         args = args,
         vln_path=f"data/task/{args.r2r_prefix}R2R_{tag}.json",
@@ -193,9 +218,9 @@ def load_dataloader(args, default_gpu, logger, local_rank, model) -> str:
     print(f"sizes traing {len(train_dataset)} val_seen {len(val_seen_dataset)} val_unseen {len(val_unseen_dataset)}")
 
     if args.mini:
-            x = np.load('x.npy')
-            y = np.load('y.npy')
-            z = np.load('z.npy')
+            x = np.load('train.npy')
+            y = np.load('val_seen.npy')
+            z = np.load('val_unseen.npy')
             train_dataset = Subset(
                 train_dataset,
                 x,  # type: ignore 850
