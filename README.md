@@ -63,7 +63,23 @@ data/
 
 ## Training & Evaluating Downstream Tasks (Discriminative) <h2 name="discri" style="display:none;"> </h2>
 
-### Training
+### Training with MLM and MVM Losses
+
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch \
+    --nproc_per_node 4 \
+    --master_port 5558 \
+    -m train \
+    --from_pretrained data/trained/pretrain_lily_new.bin \
+    --save_name yresult/FGvln_1phase \
+    --masked_vision \
+    --masked_language \
+    --batch_size 12 \
+    --num_epochs 30
+```
+
+
+### Training with PR Loss
 
 Training FGVLN with BO-based FGN sampler to generate 2 additional FGN in each batch, and 5 optimization iterations:
 
