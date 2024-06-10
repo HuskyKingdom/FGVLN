@@ -123,30 +123,4 @@ To reproduce our result, simply replace the airbert model with our FGVLN model.
 
 ## Model Zoos <h2 name="models" style="display:none;"> </h2>
 
-We provide the trained FGVLN models, feel free to test them!
-
-
-### Model pretrained on YoutubeVLN dataset
-
-| Model | Description |
-| ----- | ----------- |
-| [pretrain_lily_new.bin](https://drive.google.com/file/d/1reRM3yKULDEHuxamcmx0enn9fh147rWs/view?usp=sharing) | Lily model pre-trained on YoutubeVLN dataset only.|
-
-
-### Trained FGVLN Models
-
-| Model | Description |
-| ----- | ----------- |
-| [FGVLN_best_unseen.bin](https://drive.google.com/file/d/1OuHMYGgKyY9xoenD0PpyH_VDolIfJCZB/view?usp=sharing) | FGVLN model fine-tuned with PR loss in R2R discriminative setting.|
-| [FGVLN_best_unseen_recVLN.bin](https://drive.google.com/file/d/1OuHMYGgKyY9xoenD0PpyH_VDolIfJCZB/view?usp=sharing) | FGVLN model that adapted to genetative setting and fine-tuned by RecurrentVLN arichitecture.|
-
-
-### Ablation Study Subset Split
-
-As mentioned in the paper, for efficiency, our ablation studies were carried out on a subset of the original dataset, these subsets were randomly splited, you could split your own subset to validate if you want, we provide our split here for you in case you are interested in reproducing identical ablation studies:
-
-| Model | Description |
-| ----- | ----------- |
-| [train.npy](https://drive.google.com/file/d/1UPCZ1iA9DLIFEhOE_3roAuGb03Lpp6rP/view?usp=sharing) | Subset of training data with data indexes.|
-| [val_seen.json](https://drive.google.com/file/d/1htYU69ny7LZKzpVymeRegf-zN2b_71AZ/view?usp=sharing) | Subset of validation seen data with data indexes.|
-| [val_unseen.json](https://drive.google.com/file/d/1lqWTPE-xdym-w97yZWSnS9HqQHVnKoN_/view?usp=sharing) | Subset of validation unseen data with data indexes.|
+The models will be shared after paper acception to ensure not violating anonymity.
