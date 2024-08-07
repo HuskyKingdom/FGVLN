@@ -179,6 +179,12 @@ def get_parser() -> argparse.ArgumentParser:
         help="r2r Prefix for dataset variants (default: '')",
     )
     parser.add_argument(
+        "--dataset_name",
+        default="r2r",
+        type=str,
+        help="which dataset to evaluate with.",
+    )
+    parser.add_argument(
         "--beam_prefix",
         default="",
         type=str,

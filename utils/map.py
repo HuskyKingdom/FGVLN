@@ -7,7 +7,7 @@ from PIL import Image
 
 
 
-def visualize_and_save_attention(attention_weights, save_dir="attentions", formats=("png", "pdf")):
+def visualize_and_save_attention(attention_weights, save_dir="fg_attentions", formats=("png", "pdf")):
     """
     Visualizes and saves the attention maps.
     
@@ -37,7 +37,7 @@ def visualize_and_save_attention(attention_weights, save_dir="attentions", forma
             
             # Create a subplot for each head
             ax = axes[head_idx]
-            sns.heatmap(attention_map, cmap='plasma', ax=ax, cbar=True, cbar_kws={'shrink': 0.5}, vmin=vmin, vmax=vmax)
+            sns.heatmap(attention_map, cmap='Reds', ax=ax, cbar=True, cbar_kws={'shrink': 0.5}, vmin=vmin, vmax=vmax,linewidths=0.5)
             ax.set_title(f'Head {head_idx+1}')
             ax.axis('off')
         

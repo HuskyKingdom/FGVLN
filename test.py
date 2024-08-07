@@ -67,7 +67,11 @@ def main():
     tokenizer = BertTokenizer.from_pretrained(args.bert_tokenizer)
     features_reader = PanoFeaturesReader(args.img_feature)
 
-    vln_data = f"data/task/{args.r2r_prefix}R2R_{args.split}.json"
+
+    if args.dataset_name == "r4r":
+        vln_data = f"data/task/{args.r2r_prefix}R2R_{args.split}.json"
+    else:
+        vln_data = f"data/task/{args.r2r_prefix}R2R_{args.split}.json"
     print(vln_data)
     
     dataset = load_BeamDataset(args.split, args, tokenizer, features_reader, True, Train=False,model = None)
