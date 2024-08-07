@@ -920,6 +920,7 @@ class BeamDataset(Dataset):
 
     def __getitem__(self, beam_index: int):
 
+        max_index = beam_index + 10
         while beam_index <= max_index:
             try:
                 vln_index = self._beam_to_vln[beam_index]
