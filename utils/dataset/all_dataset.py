@@ -919,7 +919,13 @@ class BeamDataset(Dataset):
         return features, boxes, probs, masks
 
     def __getitem__(self, beam_index: int):
-        vln_index = self._beam_to_vln[beam_index]
+
+        while beam_index <= max_index:
+            try:
+                vln_index = self._beam_to_vln[beam_index]
+                break  # Exit the loop if no exception is raised
+            except IndexError:
+                beam_index += 1
         vln_item = self._vln_data[vln_index]
 
         self._visual_data = {}
