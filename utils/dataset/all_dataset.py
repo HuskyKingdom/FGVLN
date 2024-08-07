@@ -868,6 +868,8 @@ class BeamDataset(Dataset):
                     logger.warning(f"Skipping beam {beam_item['instr_id']}")
                 continue
             self._beam_to_vln[idx] = path_to_vln[path_id]
+        
+        print(f"beam_to_vln {self._beam_to_vln}")
 
         if shuffler == "different":
             self._shuffler = shuffle_different
