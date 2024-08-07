@@ -63,7 +63,7 @@ def load_pretrian_dataset(args, tokenizer, features_reader, caption_path, testse
     )
 
 
-def load_BeamDataset(tag, args, tokenizer, features_reader, default_gpu, model, Train = True):
+def load_BeamDataset(tag, args, tokenizer, features_reader, default_gpu, model, Train = True, vln_data= "r2r"):
     
 
     # num_beams=args.num_beams_train
@@ -103,7 +103,7 @@ def load_BeamDataset(tag, args, tokenizer, features_reader, default_gpu, model, 
 
     return BeamDataset(
         args = args,
-        vln_path=f"data/task/{args.r2r_prefix}R2R_{tag}.json",
+        vln_path=f"data/task/{args.r2r_prefix}{vln_data}_{tag}.json",
         beam_path=f"data/beamsearch/{args.beam_prefix}beams_{tag}.json",
         tokenizer=tokenizer,
         features_reader=features_reader,

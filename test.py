@@ -70,11 +70,13 @@ def main():
 
     if args.dataset_name == "r4r":
         vln_data = f"data/task/{args.r2r_prefix}R4R_{args.split}.json"
+        vln_data_name = "R4R"
     else:
         vln_data = f"data/task/{args.r2r_prefix}R2R_{args.split}.json"
+        vln_data_name = "R2R"
     print(vln_data)
     
-    dataset = load_BeamDataset(args.split, args, tokenizer, features_reader, True, Train=False,model = None)
+    dataset = load_BeamDataset(args.split, args, tokenizer, features_reader, True, vln_data=vln_data_name, Train=False,model = None)
 
 
     data_loader = DataLoader(
