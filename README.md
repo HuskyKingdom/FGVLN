@@ -4,7 +4,7 @@
 <img src="architecture_overview.png">
 
 
-Official Implementation of FGVLN on CoRL 2024. Draft version.
+Official Implementation of FGVLN. Draft version.
 
 Contents : [Installation](#install) | [Data Download](#data) | [Training & Evaluating Discriminative](#discri) | [Training & Evaluating Generative](#gene) | [Model Zoos](#models)
 
