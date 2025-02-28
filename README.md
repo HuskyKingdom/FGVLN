@@ -1,5 +1,5 @@
-# NIPS24_TIA
-Official Implementation of [xxx].
+# FGVLN
+Official Implementation of [FGVLN].
 
 Fine-grained crossmodality alignment between trajectory and instruction via Bayes filtering.
 
